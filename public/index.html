@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NodeRed + HTMX + Supabase</title>
+    <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+
+    <nav>
+        <li>
+            <a  href="#" 
+                hx-get="/pages/home"
+                hx-trigger="load, click"
+                hx-target="#main">
+                Home
+            </a>
+            <a  href="#" 
+                hx-get="/pages/todo"
+                hx-trigger="click"
+                hx-target="#main">
+                ToDo
+            </a>
+            <a  href="#"
+                hx-get="/pages/contacts"
+                hx-trigger="click"
+                hx-target="#main">
+                Contacts
+            </a>
+        </li>
+    </nav>
+    
+    <main id="main">
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.7/dist/htmx.min.js" integrity="sha384-ZBXiYtYQ6hJ2Y0ZNoYuI+Nq5MqWBr+chMrS/RkXpNzQCApHEhOt2aY8EJgqwHLkJ" crossorigin="anonymous"></script>
+    <script src="/assets/main.js"></script>
+</body>
+</html>

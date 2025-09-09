@@ -1,1 +1,875 @@
-[]
+[
+    {
+        "id": "5ccba3331b3862fe",
+        "type": "tab",
+        "label": "Starter",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "025d5a9e74400e55",
+        "type": "subflow",
+        "name": "Component",
+        "info": "Збирає HTML із компонентів із папки ./components/",
+        "category": "",
+        "in": [
+            {
+                "x": 40,
+                "y": 40,
+                "wires": [
+                    {
+                        "id": "2f0fd22d602c6da6"
+                    }
+                ]
+            }
+        ],
+        "out": [
+            {
+                "x": 1140,
+                "y": 300,
+                "wires": [
+                    {
+                        "id": "6578fcb77fa7c45f",
+                        "port": 0
+                    }
+                ]
+            }
+        ],
+        "env": [
+            {
+                "name": "mainComponent",
+                "type": "str",
+                "value": "index"
+            },
+            {
+                "name": "maxRecursion",
+                "type": "num",
+                "value": "10"
+            }
+        ],
+        "meta": {},
+        "color": "#DDAA99",
+        "icon": "font-awesome/fa-braille"
+    },
+    {
+        "id": "auth-check",
+        "type": "subflow",
+        "name": "auth-check",
+        "info": "Перевіряє токен з куки sb-access-token. Якщо валідний → додає msg.user, інакше повертає 401.",
+        "in": [
+            {
+                "x": 60,
+                "y": 80,
+                "wires": [
+                    {
+                        "id": "check-function"
+                    }
+                ]
+            }
+        ],
+        "out": [
+            {
+                "x": 460,
+                "y": 60,
+                "wires": [
+                    {
+                        "id": "check-function",
+                        "port": 0
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "cf522e74c2f1fece",
+        "type": "group",
+        "z": "5ccba3331b3862fe",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "55374800c3d2dc95",
+            "0cd06ad91723dcfd",
+            "1e36ab6ddd737d82",
+            "a6b05be79e90cd63",
+            "1855405a76f46c0d",
+            "c43a8ccfca68adba",
+            "c6df213397388815",
+            "5c2acfd5a03c28dc",
+            "http_in_static",
+            "func_static",
+            "file_in_static",
+            "http_resp_static",
+            "d888716296a6ddb1",
+            "bccc6f6c385b8a3a",
+            "56fc02f22a459786",
+            "e7e57dd41d47bd92",
+            "9af568f097724b7b"
+        ],
+        "x": 34,
+        "y": 99,
+        "w": 1092,
+        "h": 282
+    },
+    {
+        "id": "028f3987925e940f",
+        "type": "global-config",
+        "env": [
+            {
+                "name": "PROJECT_PATH",
+                "value": "./data/projects/nodered-htmx-supabase-starter/public",
+                "type": "str"
+            }
+        ]
+    },
+    {
+        "id": "2f0fd22d602c6da6",
+        "type": "function",
+        "z": "025d5a9e74400e55",
+        "name": "setMainFile",
+        "func": "const main = env.get(\"mainComponent\") || \"index\";\nconst projectPath = env.get(\"PROJECT_PATH\");\nmsg.project_path = projectPath;\nmsg.filename = `${projectPath}/components/${main}.html`;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 170,
+        "y": 40,
+        "wires": [
+            [
+                "52ba1c9421e10e9d"
+            ]
+        ]
+    },
+    {
+        "id": "52ba1c9421e10e9d",
+        "type": "file in",
+        "z": "025d5a9e74400e55",
+        "name": "loadMainHtml",
+        "filename": "filename",
+        "filenameType": "msg",
+        "format": "utf8",
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 340,
+        "y": 40,
+        "wires": [
+            [
+                "b573a074695aaf6e"
+            ]
+        ]
+    },
+    {
+        "id": "b573a074695aaf6e",
+        "type": "switch",
+        "z": "025d5a9e74400e55",
+        "name": "has <component>",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "regex",
+                "v": "<component>([\\w\\-\\.]+)<\\/component>",
+                "vt": "str",
+                "case": false
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 190,
+        "y": 200,
+        "wires": [
+            [
+                "56b8b2f210cc7f82"
+            ],
+            [
+                "7de6e4d2f4836966"
+            ]
+        ]
+    },
+    {
+        "id": "56b8b2f210cc7f82",
+        "type": "function",
+        "z": "025d5a9e74400e55",
+        "name": "prepareMain",
+        "func": "msg.iterationCount = (msg.iterationCount || 0) + 1;\nif (msg.iterationCount > env.get(\"maxRecursion\")) {\n  node.error(\"Recursion limit exceeded\", msg);\n  return null;\n}\nmsg.mainTemplate = msg.payload;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 490,
+        "y": 120,
+        "wires": [
+            [
+                "0dd3c51ea25ae723"
+            ]
+        ]
+    },
+    {
+        "id": "0dd3c51ea25ae723",
+        "type": "html",
+        "z": "025d5a9e74400e55",
+        "name": "extract <component>",
+        "property": "payload",
+        "outproperty": "payload",
+        "tag": "component",
+        "ret": "text",
+        "as": "multi",
+        "chr": "",
+        "x": 700,
+        "y": 120,
+        "wires": [
+            [
+                "275a16aa79884aeb"
+            ]
+        ]
+    },
+    {
+        "id": "275a16aa79884aeb",
+        "type": "function",
+        "z": "025d5a9e74400e55",
+        "name": "buildPath",
+        "func": "const component = msg.payload;\nmsg.componentName = component;\nmsg.filename = `${msg.project_path}/components/${component}.html`;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 900,
+        "y": 120,
+        "wires": [
+            [
+                "6d43bdef0cbfe423"
+            ]
+        ]
+    },
+    {
+        "id": "6d43bdef0cbfe423",
+        "type": "file in",
+        "z": "025d5a9e74400e55",
+        "name": "loadComponent",
+        "filename": "filename",
+        "filenameType": "msg",
+        "format": "utf8",
+        "sendError": false,
+        "encoding": "none",
+        "x": 1080,
+        "y": 120,
+        "wires": [
+            [
+                "82f79c0878a8fc8d"
+            ]
+        ]
+    },
+    {
+        "id": "82f79c0878a8fc8d",
+        "type": "change",
+        "z": "025d5a9e74400e55",
+        "name": "template",
+        "rules": [
+            {
+                "t": "set",
+                "p": "template",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "x": 500,
+        "y": 200,
+        "wires": [
+            [
+                "9e7a66fc75ac4830"
+            ]
+        ]
+    },
+    {
+        "id": "03f7636a76574238",
+        "type": "join",
+        "z": "025d5a9e74400e55",
+        "name": "joinComponents",
+        "mode": "custom",
+        "build": "object",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "componentName",
+        "joiner": "",
+        "joinerType": "str",
+        "useparts": true,
+        "accumulate": false,
+        "timeout": "",
+        "count": "",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 840,
+        "y": 200,
+        "wires": [
+            [
+                "d635e13233cedb4c"
+            ]
+        ]
+    },
+    {
+        "id": "d635e13233cedb4c",
+        "type": "function",
+        "z": "025d5a9e74400e55",
+        "name": "replace <component>",
+        "func": "const html = msg.mainTemplate;\nconst components = msg.payload;\nconst regex = /<component>([\\w\\-.]+)<\\/component>/g;\n\nmsg.payload = html.replace(regex, (match, name) => {\n  return components[name] || match;\n});\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1060,
+        "y": 200,
+        "wires": [
+            [
+                "b573a074695aaf6e"
+            ]
+        ]
+    },
+    {
+        "id": "6578fcb77fa7c45f",
+        "type": "template",
+        "z": "025d5a9e74400e55",
+        "name": "render output",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "",
+        "output": "str",
+        "x": 710,
+        "y": 300,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9e7a66fc75ac4830",
+        "type": "template",
+        "z": "025d5a9e74400e55",
+        "name": "",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "",
+        "output": "str",
+        "x": 660,
+        "y": 200,
+        "wires": [
+            [
+                "03f7636a76574238"
+            ]
+        ]
+    },
+    {
+        "id": "7de6e4d2f4836966",
+        "type": "change",
+        "z": "025d5a9e74400e55",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "template",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 510,
+        "y": 300,
+        "wires": [
+            [
+                "6578fcb77fa7c45f"
+            ]
+        ]
+    },
+    {
+        "id": "check-function",
+        "type": "function",
+        "z": "auth-check",
+        "name": "checkTocken",
+        "func": "const supabaseClient = global.get('supabaseClient');\nconst projectName = msg.req.params.project_name; // для редіректу\nconst token = msg.req.cookies['sb-access-token'];\n\ntry {\n    if (!token) {\n        // Токен відсутній → редірект на login\n        msg.statusCode = 302;\n        msg.headers = { \"HX-Redirect\": `/project/${projectName}` };\n        msg.payload = \"\";\n        return [null, msg];\n    }\n\n    const { data, error } = await supabaseClient.auth.getUser(token);\n\n    if (error || !data.user) {\n        // Токен протух → редірект на login\n        msg.statusCode = 302;\n        msg.headers = { \"HX-Redirect\": `/project/${projectName}` };\n        msg.payload = \"\";\n        return [null, msg];\n    }\n\n    // Токен валідний → додаємо користувача\n    msg.user = data.user;\n\n    // Опційно: додати роль користувача\n    const { data: rolesData, error: rolesErr } = await supabaseClient\n        .from('user_roles')\n        .select('roles.name')\n        .eq('user_id', data.user.id);\n\n    if (!rolesErr) {\n        msg.user.role = rolesData.length ? rolesData[0].name : 'user';\n    }\n\n    return [msg, null]; // валідний користувач\n} catch (err) {\n    msg.statusCode = 500;\n    msg.payload = { error: err.message };\n    return [null, msg];\n}\n",
+        "outputs": 2,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 240,
+        "y": 100,
+        "wires": [
+            [],
+            [
+                "4d246130acca7153"
+            ]
+        ]
+    },
+    {
+        "id": "4d246130acca7153",
+        "type": "function",
+        "z": "auth-check",
+        "name": "filename",
+        "func": "let filename;\n\nif (msg.req.url.endsWith(\"manifest.webmanifest\")) {\n    let projectName = \"\"; \n    if (msg.req.headers.referer) {\n        let parts = msg.req.headers.referer.split(\"/\");\n        projectName = parts[parts.length - 1];\n    }\n    filename = `./projects/${projectName}/manifest.webmanifest`;\n} else {\n    filename = `./projects/${msg.req.params.project_name}/login.html`;\n}\n\nmsg.filename = filename;\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 480,
+        "y": 120,
+        "wires": [
+            [
+                "3a047c0fed25cd18"
+            ]
+        ]
+    },
+    {
+        "id": "bd62e3d6f5a9df74",
+        "type": "template",
+        "z": "auth-check",
+        "name": "",
+        "field": "payload",
+        "fieldType": "flow",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "",
+        "output": "str",
+        "x": 580,
+        "y": 280,
+        "wires": [
+            [
+                "9d0ee20584a7a456"
+            ]
+        ]
+    },
+    {
+        "id": "3a047c0fed25cd18",
+        "type": "file in",
+        "z": "auth-check",
+        "name": ":login.html",
+        "filename": "filename",
+        "filenameType": "msg",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 430,
+        "y": 280,
+        "wires": [
+            [
+                "bd62e3d6f5a9df74"
+            ]
+        ]
+    },
+    {
+        "id": "9d0ee20584a7a456",
+        "type": "http response",
+        "z": "auth-check",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 740,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "bfc67594ce9932ab",
+        "type": "subflow:025d5a9e74400e55",
+        "z": "5ccba3331b3862fe",
+        "name": "",
+        "env": [
+            {
+                "name": "mainComponent",
+                "value": "todo",
+                "type": "str"
+            }
+        ],
+        "x": 470,
+        "y": 440,
+        "wires": [
+            [
+                "211265ac1b71ea62"
+            ]
+        ]
+    },
+    {
+        "id": "55374800c3d2dc95",
+        "type": "http in",
+        "z": "5ccba3331b3862fe",
+        "g": "cf522e74c2f1fece",
+        "name": "projectPages",
+        "url": "/pages/:page",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 130,
+        "y": 220,
+        "wires": [
+            [
+                "a6b05be79e90cd63"
+            ]
+        ]
+    },
+    {
+        "id": "0cd06ad91723dcfd",
+        "type": "template",
+        "z": "5ccba3331b3862fe",
+        "g": "cf522e74c2f1fece",
+        "name": "",
+        "field": "payload",
+        "fieldType": "flow",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "",
+        "output": "str",
+        "x": 860,
+        "y": 220,
+        "wires": [
+            [
+                "1855405a76f46c0d"
+            ]
+        ]
+    },
+    {
+        "id": "1e36ab6ddd737d82",
+        "type": "file in",
+        "z": "5ccba3331b3862fe",
+        "g": "cf522e74c2f1fece",
+        "name": ":page.html",
+        "filename": "filename",
+        "filenameType": "msg",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 470,
+        "y": 220,
+        "wires": [
+            [
+                "d888716296a6ddb1"
+            ]
+        ]
+    },
+    {
+        "id": "a6b05be79e90cd63",
+        "type": "function",
+        "z": "5ccba3331b3862fe",
+        "g": "cf522e74c2f1fece",
+        "name": "filename",
+        "func": "const projectPath = env.get(\"PROJECT_PATH\");\nlet filename = `${projectPath}/pages/${msg.req.params.page}.html`\n\nmsg.filename = filename\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 220,
+        "wires": [
+            [
+                "1e36ab6ddd737d82"
+            ]
+        ]
+    },
+    {
+        "id": "1855405a76f46c0d",
+        "type": "http response",
+        "z": "5ccba3331b3862fe",
+        "g": "cf522e74c2f1fece",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 1040,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "c43a8ccfca68adba",
+        "type": "http in",
+        "z": "5ccba3331b3862fe",
+        "g": "cf522e74c2f1fece",
+        "name": "indexPage",
+        "url": "/ui",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 120,
+        "y": 140,
+        "wires": [
+            [
+                "c6df213397388815"
+            ]
+        ]
+    },
+    {
+        "id": "c6df213397388815",
+        "type": "function",
+        "z": "5ccba3331b3862fe",
+        "g": "cf522e74c2f1fece",
+        "name": "filename",
+        "func": "let filename;\nconst projectPath = env.get(\"PROJECT_PATH\");\nif (msg.req.url.endsWith(\"manifest.webmanifest\")) {\n    let projectName = \"\"; \n    if (msg.req.headers.referer) {\n        let parts = msg.req.headers.referer.split(\"/\");\n        projectName = parts[parts.length - 1];\n    }\n    filename = `${projectPath}/index.html`;\n} else {\n    filename = `${projectPath}/index.html`;\n}\n\nmsg.filename = filename;\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 140,
+        "wires": [
+            [
+                "56fc02f22a459786"
+            ]
+        ]
+    },
+    {
+        "id": "5c2acfd5a03c28dc",
+        "type": "comment",
+        "z": "5ccba3331b3862fe",
+        "g": "cf522e74c2f1fece",
+        "name": "Pages",
+        "info": "",
+        "x": 1050,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "http_in_static",
+        "type": "http in",
+        "z": "5ccba3331b3862fe",
+        "g": "cf522e74c2f1fece",
+        "name": "Static files",
+        "url": "/assets/:filename",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 120,
+        "y": 340,
+        "wires": [
+            [
+                "func_static"
+            ]
+        ]
+    },
+    {
+        "id": "func_static",
+        "type": "function",
+        "z": "5ccba3331b3862fe",
+        "g": "cf522e74c2f1fece",
+        "name": "resolve file",
+        "func": "let project = msg.req.params.project_name;\nlet file = msg.req.params.filename;\nconst projectPath = env.get(\"PROJECT_PATH\");\nmsg.filename = `${projectPath}/assets/${file}`;\n\n// визначимо MIME-тип\nlet ext = file.split('.').pop().toLowerCase();\nlet mime = {\n    css: \"text/css\",\n    js: \"application/javascript\",\n    png: \"image/png\",\n    jpg: \"image/jpeg\",\n    jpeg: \"image/jpeg\",\n    svg: \"image/svg+xml\"\n};\nmsg.headers = {\"Content-Type\": mime[ext] || \"application/octet-stream\"};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 340,
+        "wires": [
+            [
+                "file_in_static"
+            ]
+        ]
+    },
+    {
+        "id": "file_in_static",
+        "type": "file in",
+        "z": "5ccba3331b3862fe",
+        "g": "cf522e74c2f1fece",
+        "name": "read asset",
+        "filename": "filename",
+        "filenameType": "msg",
+        "format": "",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "x": 540,
+        "y": 340,
+        "wires": [
+            [
+                "http_resp_static"
+            ]
+        ]
+    },
+    {
+        "id": "http_resp_static",
+        "type": "http response",
+        "z": "5ccba3331b3862fe",
+        "g": "cf522e74c2f1fece",
+        "name": "serve asset",
+        "statusCode": "",
+        "headers": {},
+        "x": 730,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "d888716296a6ddb1",
+        "type": "change",
+        "z": "5ccba3331b3862fe",
+        "g": "cf522e74c2f1fece",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "template",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 670,
+        "y": 220,
+        "wires": [
+            [
+                "0cd06ad91723dcfd"
+            ]
+        ]
+    },
+    {
+        "id": "bccc6f6c385b8a3a",
+        "type": "template",
+        "z": "5ccba3331b3862fe",
+        "g": "cf522e74c2f1fece",
+        "name": "",
+        "field": "payload",
+        "fieldType": "flow",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "",
+        "output": "str",
+        "x": 860,
+        "y": 140,
+        "wires": [
+            [
+                "e7e57dd41d47bd92"
+            ]
+        ]
+    },
+    {
+        "id": "56fc02f22a459786",
+        "type": "file in",
+        "z": "5ccba3331b3862fe",
+        "g": "cf522e74c2f1fece",
+        "name": ":index.html",
+        "filename": "filename",
+        "filenameType": "msg",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 470,
+        "y": 140,
+        "wires": [
+            [
+                "9af568f097724b7b"
+            ]
+        ]
+    },
+    {
+        "id": "e7e57dd41d47bd92",
+        "type": "http response",
+        "z": "5ccba3331b3862fe",
+        "g": "cf522e74c2f1fece",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 1040,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "9af568f097724b7b",
+        "type": "change",
+        "z": "5ccba3331b3862fe",
+        "g": "cf522e74c2f1fece",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "template",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 670,
+        "y": 140,
+        "wires": [
+            [
+                "bccc6f6c385b8a3a"
+            ]
+        ]
+    },
+    {
+        "id": "89bc1ee1438620e8",
+        "type": "http in",
+        "z": "5ccba3331b3862fe",
+        "name": "",
+        "url": "/components/todo",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 160,
+        "y": 440,
+        "wires": [
+            [
+                "bfc67594ce9932ab"
+            ]
+        ]
+    },
+    {
+        "id": "211265ac1b71ea62",
+        "type": "http response",
+        "z": "5ccba3331b3862fe",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 860,
+        "y": 440,
+        "wires": []
+    }
+]
