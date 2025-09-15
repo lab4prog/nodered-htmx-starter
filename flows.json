@@ -53,35 +53,6 @@
         "icon": "font-awesome/fa-braille"
     },
     {
-        "id": "auth-check",
-        "type": "subflow",
-        "name": "auth-check",
-        "info": "Перевіряє токен з куки sb-access-token. Якщо валідний → додає msg.user, інакше повертає 401.",
-        "in": [
-            {
-                "x": 60,
-                "y": 80,
-                "wires": [
-                    {
-                        "id": "check-function"
-                    }
-                ]
-            }
-        ],
-        "out": [
-            {
-                "x": 460,
-                "y": 60,
-                "wires": [
-                    {
-                        "id": "check-function",
-                        "port": 0
-                    }
-                ]
-            }
-        ]
-    },
-    {
         "id": "cf522e74c2f1fece",
         "type": "group",
         "z": "5ccba3331b3862fe",
@@ -114,9 +85,9 @@
             "9af568f097724b7b"
         ],
         "x": 34,
-        "y": 99,
+        "y": 39,
         "w": 1092,
-        "h": 282
+        "h": 242
     },
     {
         "id": "028f3987925e940f",
@@ -412,97 +383,6 @@
         ]
     },
     {
-        "id": "check-function",
-        "type": "function",
-        "z": "auth-check",
-        "name": "checkTocken",
-        "func": "const supabaseClient = global.get('supabaseClient');\nconst projectName = msg.req.params.project_name; // для редіректу\nconst token = msg.req.cookies['sb-access-token'];\n\ntry {\n    if (!token) {\n        // Токен відсутній → редірект на login\n        msg.statusCode = 302;\n        msg.headers = { \"HX-Redirect\": `/project/${projectName}` };\n        msg.payload = \"\";\n        return [null, msg];\n    }\n\n    const { data, error } = await supabaseClient.auth.getUser(token);\n\n    if (error || !data.user) {\n        // Токен протух → редірект на login\n        msg.statusCode = 302;\n        msg.headers = { \"HX-Redirect\": `/project/${projectName}` };\n        msg.payload = \"\";\n        return [null, msg];\n    }\n\n    // Токен валідний → додаємо користувача\n    msg.user = data.user;\n\n    // Опційно: додати роль користувача\n    const { data: rolesData, error: rolesErr } = await supabaseClient\n        .from('user_roles')\n        .select('roles.name')\n        .eq('user_id', data.user.id);\n\n    if (!rolesErr) {\n        msg.user.role = rolesData.length ? rolesData[0].name : 'user';\n    }\n\n    return [msg, null]; // валідний користувач\n} catch (err) {\n    msg.statusCode = 500;\n    msg.payload = { error: err.message };\n    return [null, msg];\n}\n",
-        "outputs": 2,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 240,
-        "y": 100,
-        "wires": [
-            [],
-            [
-                "4d246130acca7153"
-            ]
-        ]
-    },
-    {
-        "id": "4d246130acca7153",
-        "type": "function",
-        "z": "auth-check",
-        "name": "filename",
-        "func": "let filename;\n\nif (msg.req.url.endsWith(\"manifest.webmanifest\")) {\n    let projectName = \"\"; \n    if (msg.req.headers.referer) {\n        let parts = msg.req.headers.referer.split(\"/\");\n        projectName = parts[parts.length - 1];\n    }\n    filename = `./projects/${projectName}/manifest.webmanifest`;\n} else {\n    filename = `./projects/${msg.req.params.project_name}/login.html`;\n}\n\nmsg.filename = filename;\nreturn msg;\n",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 480,
-        "y": 120,
-        "wires": [
-            [
-                "3a047c0fed25cd18"
-            ]
-        ]
-    },
-    {
-        "id": "bd62e3d6f5a9df74",
-        "type": "template",
-        "z": "auth-check",
-        "name": "",
-        "field": "payload",
-        "fieldType": "flow",
-        "format": "handlebars",
-        "syntax": "mustache",
-        "template": "",
-        "output": "str",
-        "x": 580,
-        "y": 280,
-        "wires": [
-            [
-                "9d0ee20584a7a456"
-            ]
-        ]
-    },
-    {
-        "id": "3a047c0fed25cd18",
-        "type": "file in",
-        "z": "auth-check",
-        "name": ":login.html",
-        "filename": "filename",
-        "filenameType": "msg",
-        "format": "utf8",
-        "chunk": false,
-        "sendError": false,
-        "encoding": "none",
-        "allProps": false,
-        "x": 430,
-        "y": 280,
-        "wires": [
-            [
-                "bd62e3d6f5a9df74"
-            ]
-        ]
-    },
-    {
-        "id": "9d0ee20584a7a456",
-        "type": "http response",
-        "z": "auth-check",
-        "name": "",
-        "statusCode": "200",
-        "headers": {},
-        "x": 740,
-        "y": 280,
-        "wires": []
-    },
-    {
         "id": "bfc67594ce9932ab",
         "type": "subflow:025d5a9e74400e55",
         "z": "5ccba3331b3862fe",
@@ -514,8 +394,8 @@
                 "type": "str"
             }
         ],
-        "x": 470,
-        "y": 440,
+        "x": 530,
+        "y": 340,
         "wires": [
             [
                 "211265ac1b71ea62"
@@ -533,7 +413,7 @@
         "upload": false,
         "swaggerDoc": "",
         "x": 130,
-        "y": 220,
+        "y": 160,
         "wires": [
             [
                 "a6b05be79e90cd63"
@@ -553,7 +433,7 @@
         "template": "",
         "output": "str",
         "x": 860,
-        "y": 220,
+        "y": 160,
         "wires": [
             [
                 "1855405a76f46c0d"
@@ -574,7 +454,7 @@
         "encoding": "none",
         "allProps": false,
         "x": 470,
-        "y": 220,
+        "y": 160,
         "wires": [
             [
                 "d888716296a6ddb1"
@@ -595,7 +475,7 @@
         "finalize": "",
         "libs": [],
         "x": 300,
-        "y": 220,
+        "y": 160,
         "wires": [
             [
                 "1e36ab6ddd737d82"
@@ -611,7 +491,7 @@
         "statusCode": "200",
         "headers": {},
         "x": 1040,
-        "y": 220,
+        "y": 160,
         "wires": []
     },
     {
@@ -625,7 +505,7 @@
         "upload": false,
         "swaggerDoc": "",
         "x": 120,
-        "y": 140,
+        "y": 80,
         "wires": [
             [
                 "c6df213397388815"
@@ -646,7 +526,7 @@
         "finalize": "",
         "libs": [],
         "x": 300,
-        "y": 140,
+        "y": 80,
         "wires": [
             [
                 "56fc02f22a459786"
@@ -661,7 +541,7 @@
         "name": "Pages",
         "info": "",
         "x": 1050,
-        "y": 340,
+        "y": 240,
         "wires": []
     },
     {
@@ -675,7 +555,7 @@
         "upload": false,
         "swaggerDoc": "",
         "x": 120,
-        "y": 340,
+        "y": 240,
         "wires": [
             [
                 "func_static"
@@ -688,7 +568,7 @@
         "z": "5ccba3331b3862fe",
         "g": "cf522e74c2f1fece",
         "name": "resolve file",
-        "func": "let project = msg.req.params.project_name;\nlet file = msg.req.params.filename;\nconst projectPath = env.get(\"PROJECT_PATH\");\nmsg.filename = `${projectPath}/assets/${file}`;\n\n// визначимо MIME-тип\nlet ext = file.split('.').pop().toLowerCase();\nlet mime = {\n    css: \"text/css\",\n    js: \"application/javascript\",\n    png: \"image/png\",\n    jpg: \"image/jpeg\",\n    jpeg: \"image/jpeg\",\n    svg: \"image/svg+xml\"\n};\nmsg.headers = {\"Content-Type\": mime[ext] || \"application/octet-stream\"};\n\nreturn msg;",
+        "func": "let project = msg.req.params.project_name;\nlet file = msg.req.params.filename;\nconst projectPath = env.get(\"PROJECT_PATH\");\nmsg.filename = `${projectPath}/assets/${file}`;\n\nlet ext = file.split('.').pop().toLowerCase();\nlet mime = {\n    css: \"text/css\",\n    js: \"application/javascript\",\n    png: \"image/png\",\n    jpg: \"image/jpeg\",\n    jpeg: \"image/jpeg\",\n    svg: \"image/svg+xml\"\n};\nmsg.headers = {\"Content-Type\": mime[ext] || \"application/octet-stream\"};\n\nreturn msg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -696,7 +576,7 @@
         "finalize": "",
         "libs": [],
         "x": 340,
-        "y": 340,
+        "y": 240,
         "wires": [
             [
                 "file_in_static"
@@ -716,7 +596,7 @@
         "sendError": false,
         "encoding": "none",
         "x": 540,
-        "y": 340,
+        "y": 240,
         "wires": [
             [
                 "http_resp_static"
@@ -732,7 +612,7 @@
         "statusCode": "",
         "headers": {},
         "x": 730,
-        "y": 340,
+        "y": 240,
         "wires": []
     },
     {
@@ -756,7 +636,7 @@
         "to": "",
         "reg": false,
         "x": 670,
-        "y": 220,
+        "y": 160,
         "wires": [
             [
                 "0cd06ad91723dcfd"
@@ -776,7 +656,7 @@
         "template": "",
         "output": "str",
         "x": 860,
-        "y": 140,
+        "y": 80,
         "wires": [
             [
                 "e7e57dd41d47bd92"
@@ -797,7 +677,7 @@
         "encoding": "none",
         "allProps": false,
         "x": 470,
-        "y": 140,
+        "y": 80,
         "wires": [
             [
                 "9af568f097724b7b"
@@ -813,7 +693,7 @@
         "statusCode": "200",
         "headers": {},
         "x": 1040,
-        "y": 140,
+        "y": 80,
         "wires": []
     },
     {
@@ -837,7 +717,7 @@
         "to": "",
         "reg": false,
         "x": 670,
-        "y": 140,
+        "y": 80,
         "wires": [
             [
                 "bccc6f6c385b8a3a"
@@ -854,10 +734,10 @@
         "upload": false,
         "swaggerDoc": "",
         "x": 160,
-        "y": 440,
+        "y": 340,
         "wires": [
             [
-                "bfc67594ce9932ab"
+                "6d6308fb346dd11d"
             ]
         ]
     },
@@ -868,8 +748,28 @@
         "name": "",
         "statusCode": "200",
         "headers": {},
-        "x": 860,
-        "y": 440,
+        "x": 720,
+        "y": 340,
         "wires": []
+    },
+    {
+        "id": "6d6308fb346dd11d",
+        "type": "function",
+        "z": "5ccba3331b3862fe",
+        "name": "todos",
+        "func": "msg.todos = [\n    { id: 1, title: \"Buy milk\", done: false },\n    { id: 2, title: \"Do your homework\", done: true }\n];\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 340,
+        "wires": [
+            [
+                "bfc67594ce9932ab"
+            ]
+        ]
     }
 ]

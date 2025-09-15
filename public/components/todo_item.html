@@ -1,1 +1,6 @@
-<li>todo-item</li>
+{{# todos}}
+<li class="todo-item {{#done}}completed{{/done}}">
+    <input type="checkbox" {{#done}}checked{{/done}}>
+    <span>{{title}}</span>
+</li>
+{{/ todos}}
