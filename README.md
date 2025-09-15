@@ -1,4 +1,4 @@
-nodered-htmx-starter
+nodered-htmx-supabase-starter
 =============================
 
 nodered-htmx-supabase-starter
