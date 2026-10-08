@@ -1,41 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NodeRed + HTMX</title>
     <link rel="stylesheet" href="/assets/style.css">
 </head>
+
 <body>
 
     <nav>
         <li>
-            <a  href="#" 
-                hx-get="/pages/home"
-                hx-trigger="load, click"
-                hx-target="#main">
+            <a href="#" hx-get="/pages/home" hx-trigger="load, click" hx-target="#main">
                 Home
             </a>
-            <a  href="#" 
-                hx-get="/pages/todo"
-                hx-trigger="click"
-                hx-target="#main">
+            <a href="#" hx-get="/pages/todo" hx-trigger="click" hx-target="#main">
                 ToDo
             </a>
-            <a  href="#"
-                hx-get="/pages/contacts"
-                hx-trigger="click"
-                hx-target="#main">
+            <a href="#" hx-get="/pages/contacts" hx-trigger="click" hx-target="#main">
                 Contacts
             </a>
         </li>
     </nav>
-    
+
     <main id="main">
 
     </main>
+    
+    <!-- LOADER -->
+    <div id="indicator" class="htmx-indicator w-100 justify-content-center align-items-center py-5">
+        <div class="spinner-border text-primary" role="status"></div>
+    </div>
+    <!-- END LOADER -->
 
-    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.7/dist/htmx.min.js" integrity="sha384-ZBXiYtYQ6hJ2Y0ZNoYuI+Nq5MqWBr+chMrS/RkXpNzQCApHEhOt2aY8EJgqwHLkJ" crossorigin="anonymous"></script>
+    <!-- NOTIFICATION -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 5000;" id="toastPlacement"></div>
+
+    <template id="toast-template-success">
+        <div class="toast align-items-center text-white bg-success border-0 mb-2" role="alert" aria-live="assertive"
+            aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body d-flex align-items-center">
+                    <i class="ti ti-check me-2 fs-3"></i>
+                    <div class="toast-text"></div>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </template>
+
+    <template id="toast-template-error">
+        <div class="toast align-items-center text-white bg-danger border-0 mb-2" role="alert" aria-live="assertive"
+            aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body d-flex align-items-center">
+                    <i class="ti ti-alert-triangle me-2 fs-3"></i>
+                    <div class="toast-text"></div>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </template>
+
+    <template id="toast-template-info">
+        <div class="toast align-items-center text-white bg-primary border-0 mb-2" role="alert" aria-live="assertive"
+            aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body d-flex align-items-center">
+                    <i class="ti ti-info-circle me-2 fs-3"></i>
+                    <div class="toast-text"></div>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </template>
+    <!-- END NOTIFICATION-->
+
+    <!-- MODAL -->
+    <div class="modal" id="Modal" tabindex="-1">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" id="ModalContent">
+            </div>
+        </div>
+    </div>
+    <!-- END MODAL -->
+
+    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.7/dist/htmx.min.js"
+        integrity="sha384-ZBXiYtYQ6hJ2Y0ZNoYuI+Nq5MqWBr+chMrS/RkXpNzQCApHEhOt2aY8EJgqwHLkJ"
+        crossorigin="anonymous"></script>
     <script src="/assets/main.js"></script>
 </body>
+
 </html>

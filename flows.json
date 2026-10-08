@@ -11,26 +11,25 @@
         "id": "025d5a9e74400e55",
         "type": "subflow",
         "name": "Component",
-        "info": "Збирає HTML із компонентів із папки ./components/",
         "category": "",
         "in": [
             {
-                "x": 40,
+                "x": 80,
                 "y": 120,
                 "wires": [
                     {
-                        "id": "8884863fecb63f3c"
+                        "id": "f7e4fd3437001fc9"
                     }
                 ]
             }
         ],
         "out": [
             {
-                "x": 880,
-                "y": 320,
+                "x": 860,
+                "y": 400,
                 "wires": [
                     {
-                        "id": "7181bf4dbc626a94",
+                        "id": "bda73fa3568b8460",
                         "port": 0
                     }
                 ]
@@ -49,8 +48,53 @@
             }
         ],
         "meta": {},
-        "color": "#DDAA99",
+        "color": "#3FADB5",
         "icon": "font-awesome/fa-braille"
+    },
+    {
+        "id": "07d931553ed4e880",
+        "type": "subflow",
+        "name": "Page",
+        "info": "",
+        "category": "",
+        "in": [
+            {
+                "x": 60,
+                "y": 100,
+                "wires": [
+                    {
+                        "id": "0bdc91aa9c6b4624"
+                    }
+                ]
+            }
+        ],
+        "out": [
+            {
+                "x": 820,
+                "y": 380,
+                "wires": [
+                    {
+                        "id": "5d336179495938c8",
+                        "port": 0
+                    }
+                ]
+            }
+        ],
+        "env": [
+            {
+                "name": "page",
+                "type": "str",
+                "value": "index"
+            },
+            {
+                "name": "maxRecursion",
+                "type": "num",
+                "value": "10"
+            }
+        ],
+        "meta": {},
+        "color": "#87A980",
+        "icon": "node-red/file.svg"
     },
     {
         "id": "cf522e74c2f1fece",
@@ -66,30 +110,25 @@
             "color": "#a4a4a4"
         },
         "nodes": [
-            "55374800c3d2dc95",
-            "0cd06ad91723dcfd",
-            "1e36ab6ddd737d82",
-            "a6b05be79e90cd63",
-            "1855405a76f46c0d",
-            "c43a8ccfca68adba",
-            "c6df213397388815",
             "5c2acfd5a03c28dc",
+            "39b97c0ed1067938",
+            "d3d2155d2d358b96",
+            "e213f8a2a805cbd6",
             "http_in_static",
             "func_static",
             "file_in_static",
             "http_resp_static",
-            "d888716296a6ddb1",
+            "c43a8ccfca68adba",
+            "c6df213397388815",
             "bccc6f6c385b8a3a",
             "56fc02f22a459786",
             "e7e57dd41d47bd92",
-            "9af568f097724b7b",
-            "39b97c0ed1067938",
-            "d3d2155d2d358b96"
+            "9af568f097724b7b"
         ],
         "x": 34,
         "y": 39,
-        "w": 1092,
-        "h": 302
+        "w": 1192,
+        "h": 262
     },
     {
         "id": "028f3987925e940f",
@@ -97,42 +136,42 @@
         "env": [
             {
                 "name": "PROJECT_PATH",
-                "value": "./data/projects/nodered-htmx-supabase-starter/public",
+                "value": "./data/projects/nodered-htmx-starter",
                 "type": "str"
             }
         ]
     },
     {
-        "id": "8884863fecb63f3c",
+        "id": "f7e4fd3437001fc9",
         "type": "function",
         "z": "025d5a9e74400e55",
         "name": "setMainFile",
-        "func": "const main = env.get(\"mainComponent\") || \"index\";\nconst projectPath = env.get(\"PROJECT_PATH\");\nlet cache = global.get(\"cache\") || {};\n\n\nmsg.project_path = projectPath;\nmsg.filename = `${projectPath}/components/${main}.html`;\nconst cache_component = cache[msg.filename];\n\nif (!cache_component){\n    msg.is_catche = false;\n} else {\n    msg.payload = cache_component\n    msg.is_catche = true;\n}\nreturn msg;",
+        "func": "const main = env.get(\"mainComponent\") || \"index\";\nconst projectPath = env.get(\"PROJECT_PATH\");\nlet cache = global.get(\"cache\") || {};\n\n\nmsg.project_path = projectPath;\nmsg.filename = `${projectPath}/public/components/${main}.html`;\nconst cache_component = cache[msg.filename];\n\nif (!cache_component){\n    msg.is_catche = false;\n} else {\n    msg.payload = cache_component\n    msg.is_catche = true;\n}\nreturn msg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 170,
+        "x": 210,
         "y": 120,
         "wires": [
             [
-                "33b32ccb6030cdd9"
+                "2f0b563c58790102"
             ]
         ]
     },
     {
-        "id": "405511c69dbbca9e",
+        "id": "de48709906075fa0",
         "type": "switch",
         "z": "025d5a9e74400e55",
-        "name": "has <component>",
+        "name": "has <Component />?",
         "property": "payload",
         "propertyType": "msg",
         "rules": [
             {
                 "t": "regex",
-                "v": "<component>([\\w\\-\\.]+)<\\/component>",
+                "v": "<([A-Z][A-Za-z0-9_-]*)\\s*(?:\\/>|>.*?<\\/\\1>)",
                 "vt": "str",
                 "case": false
             },
@@ -143,96 +182,59 @@
         "checkall": "true",
         "repair": false,
         "outputs": 2,
-        "x": 550,
-        "y": 220,
+        "x": 260,
+        "y": 300,
         "wires": [
             [
-                "5f68003181ac2533"
+                "d54ad7646035e5d3"
             ],
             [
-                "f1fba02dc9564d52"
+                "79675930572f016a"
             ]
         ]
     },
     {
-        "id": "5f68003181ac2533",
+        "id": "d54ad7646035e5d3",
         "type": "function",
         "z": "025d5a9e74400e55",
-        "name": "prepareMain",
-        "func": "msg.iterationCount = (msg.iterationCount || 0) + 1;\nif (msg.iterationCount > env.get(\"maxRecursion\")) {\n  node.error(\"Recursion limit exceeded\", msg);\n  return null;\n}\nmsg.mainTemplate = msg.payload;\nreturn msg;",
+        "name": "findComponents",
+        "func": "msg.iterationCount = (msg.iterationCount || 0) + 1;\nconst maxRecursion = env.get(\"maxRecursion\") || 10;\n\nif (msg.iterationCount > maxRecursion) {\n  node.error(\"Recursion limit exceeded\", msg);\n  return null;\n}\n\nconst mainTemplate = msg.payload;\nconst regex = /<([A-Z][A-Za-z0-9_-]*)\\s*(?:\\/>|>.*?<\\/\\1>)/gs;\nconst matches = [...mainTemplate.matchAll(regex)];\n\nlet foundTags = [];\n\nif (matches.length > 0) {\n  foundTags = [...new Set(matches.map(match => match[1]))];\n}\n\nmsg.payload = foundTags;\nmsg.mainTemplate = mainTemplate;\n\nreturn msg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 550,
-        "y": 100,
+        "x": 240,
+        "y": 240,
         "wires": [
             [
-                "1216d3b92b4cb303"
+                "9bd2bc4fbb9d7bcf"
             ]
         ]
     },
     {
-        "id": "1216d3b92b4cb303",
-        "type": "html",
-        "z": "025d5a9e74400e55",
-        "name": "extract <component>",
-        "property": "payload",
-        "outproperty": "payload",
-        "tag": "component",
-        "ret": "text",
-        "as": "multi",
-        "chr": "",
-        "x": 740,
-        "y": 100,
-        "wires": [
-            [
-                "a4a952b987a54749"
-            ]
-        ]
-    },
-    {
-        "id": "a4a952b987a54749",
+        "id": "41e15edd48b9b6c0",
         "type": "function",
         "z": "025d5a9e74400e55",
         "name": "buildPath",
-        "func": "const component = msg.payload;\nlet cache = global.get(\"cache\") || {};\n\nmsg.componentName = component;\nmsg.filename = `${msg.project_path}/components/${component}.html`;\n\nconst cache_component = cache[msg.filename];\nif (!cache_component) {\n    msg.is_catche = false;\n} else {\n    msg.payload = cache_component\n    msg.is_catche = true;\n}\nreturn msg;",
+        "func": "const component = msg.payload;\nlet cache = global.get(\"cache\") || {};\n\nmsg.componentName = component;\nmsg.filename = `${msg.project_path}/public/components/${component}.html`;\n\nconst cache_component = cache[msg.filename];\nif (!cache_component) {\n    msg.is_catche = false;\n} else {\n    msg.payload = cache_component\n    msg.is_catche = true;\n}\nreturn msg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 940,
-        "y": 100,
+        "x": 540,
+        "y": 240,
         "wires": [
             [
-                "6a9406204e60a0c0"
+                "2b3c056ed7829e6c"
             ]
         ]
     },
     {
-        "id": "679665608fdc93d4",
-        "type": "file in",
-        "z": "025d5a9e74400e55",
-        "name": "loadComponent",
-        "filename": "filename",
-        "filenameType": "msg",
-        "format": "utf8",
-        "sendError": false,
-        "encoding": "none",
-        "x": 900,
-        "y": 40,
-        "wires": [
-            [
-                "6a80aca59b0e2fe0"
-            ]
-        ]
-    },
-    {
-        "id": "68f6d304c649b6d2",
+        "id": "7665522add258aad",
         "type": "change",
         "z": "025d5a9e74400e55",
         "name": "template",
@@ -245,16 +247,16 @@
                 "tot": "msg"
             }
         ],
-        "x": 1320,
-        "y": 160,
+        "x": 900,
+        "y": 220,
         "wires": [
             [
-                "2f6b1a9f139cbfc9"
+                "99386e4ed3f4f23f"
             ]
         ]
     },
     {
-        "id": "74bc84ea30520580",
+        "id": "62ac36eed717a3cc",
         "type": "join",
         "z": "025d5a9e74400e55",
         "name": "joinComponents",
@@ -274,36 +276,36 @@
         "reduceInit": "",
         "reduceInitType": "",
         "reduceFixup": "",
-        "x": 1340,
-        "y": 220,
+        "x": 860,
+        "y": 300,
         "wires": [
             [
-                "3ad5fe5fe8c1501f"
+                "a074337af5becf4e"
             ]
         ]
     },
     {
-        "id": "3ad5fe5fe8c1501f",
+        "id": "a074337af5becf4e",
         "type": "function",
         "z": "025d5a9e74400e55",
         "name": "replace <component>",
-        "func": "const html = msg.mainTemplate;\nconst components = msg.payload;\nconst regex = /<component>([\\w\\-.]+)<\\/component>/g;\n\nmsg.payload = html.replace(regex, (match, name) => {\n  return components[name] || match;\n});\n\nreturn msg;",
+        "func": "const html = msg.mainTemplate;\nconst components = msg.payload;\nconst regex = /<([A-Z][A-Za-z0-9_-]*)\\s*(?:\\/>|>.*?<\\/\\1>)/gs;\n\nmsg.payload = html.replace(regex, (match, name) => {\n  return components[name] || match;\n});\n\nreturn msg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1540,
-        "y": 220,
+        "x": 1080,
+        "y": 300,
         "wires": [
             [
-                "405511c69dbbca9e"
+                "de48709906075fa0"
             ]
         ]
     },
     {
-        "id": "7181bf4dbc626a94",
+        "id": "bda73fa3568b8460",
         "type": "template",
         "z": "025d5a9e74400e55",
         "name": "render output",
@@ -314,13 +316,13 @@
         "template": "",
         "output": "str",
         "x": 750,
-        "y": 320,
+        "y": 400,
         "wires": [
             []
         ]
     },
     {
-        "id": "2f6b1a9f139cbfc9",
+        "id": "99386e4ed3f4f23f",
         "type": "template",
         "z": "025d5a9e74400e55",
         "name": "",
@@ -330,16 +332,16 @@
         "syntax": "mustache",
         "template": "",
         "output": "str",
-        "x": 1480,
-        "y": 160,
+        "x": 1060,
+        "y": 220,
         "wires": [
             [
-                "74bc84ea30520580"
+                "62ac36eed717a3cc"
             ]
         ]
     },
     {
-        "id": "f1fba02dc9564d52",
+        "id": "79675930572f016a",
         "type": "change",
         "z": "025d5a9e74400e55",
         "name": "",
@@ -357,16 +359,16 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 570,
-        "y": 320,
+        "x": 290,
+        "y": 400,
         "wires": [
             [
-                "7181bf4dbc626a94"
+                "c51399b894c0ef45"
             ]
         ]
     },
     {
-        "id": "6a9406204e60a0c0",
+        "id": "2b3c056ed7829e6c",
         "type": "switch",
         "z": "025d5a9e74400e55",
         "name": "",
@@ -383,19 +385,103 @@
         "checkall": "true",
         "repair": false,
         "outputs": 2,
-        "x": 1090,
-        "y": 100,
+        "x": 690,
+        "y": 240,
         "wires": [
             [
-                "679665608fdc93d4"
+                "bae3f16075f0cc9a"
             ],
             [
-                "68f6d304c649b6d2"
+                "7665522add258aad"
             ]
         ]
     },
     {
-        "id": "6a80aca59b0e2fe0",
+        "id": "2f0b563c58790102",
+        "type": "switch",
+        "z": "025d5a9e74400e55",
+        "name": "",
+        "property": "is_catche",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "false"
+            },
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 350,
+        "y": 120,
+        "wires": [
+            [
+                "477532eb971d158e"
+            ],
+            [
+                "c80b561af420c71b"
+            ]
+        ]
+    },
+    {
+        "id": "9bd2bc4fbb9d7bcf",
+        "type": "split",
+        "z": "025d5a9e74400e55",
+        "name": "",
+        "splt": "\\n",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "property": "payload",
+        "x": 410,
+        "y": 240,
+        "wires": [
+            [
+                "41e15edd48b9b6c0"
+            ]
+        ]
+    },
+    {
+        "id": "91bdd7c2edc05a2b",
+        "type": "link in",
+        "z": "025d5a9e74400e55",
+        "name": "link in 2",
+        "links": [
+            "c80b561af420c71b"
+        ],
+        "x": 95,
+        "y": 300,
+        "wires": [
+            [
+                "de48709906075fa0"
+            ]
+        ]
+    },
+    {
+        "id": "477532eb971d158e",
+        "type": "file in",
+        "z": "025d5a9e74400e55",
+        "name": "loadMainHtml",
+        "filename": "filename",
+        "filenameType": "msg",
+        "format": "utf8",
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 220,
+        "y": 60,
+        "wires": [
+            [
+                "55b9d3fd23a0a34e"
+            ]
+        ]
+    },
+    {
+        "id": "55b9d3fd23a0a34e",
         "type": "function",
         "z": "025d5a9e74400e55",
         "name": "setCache",
@@ -406,18 +492,364 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1080,
-        "y": 40,
+        "x": 400,
+        "y": 60,
         "wires": [
             [
-                "68f6d304c649b6d2"
+                "c80b561af420c71b"
             ]
         ]
     },
     {
-        "id": "33b32ccb6030cdd9",
-        "type": "switch",
+        "id": "c80b561af420c71b",
+        "type": "link out",
         "z": "025d5a9e74400e55",
+        "name": "link out 1",
+        "mode": "link",
+        "links": [
+            "91bdd7c2edc05a2b"
+        ],
+        "x": 515,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "bae3f16075f0cc9a",
+        "type": "file in",
+        "z": "025d5a9e74400e55",
+        "name": "loadComponent",
+        "filename": "filename",
+        "filenameType": "msg",
+        "format": "utf8",
+        "sendError": false,
+        "encoding": "none",
+        "x": 560,
+        "y": 180,
+        "wires": [
+            [
+                "790fd7dfea462c5a"
+            ]
+        ]
+    },
+    {
+        "id": "790fd7dfea462c5a",
+        "type": "function",
+        "z": "025d5a9e74400e55",
+        "name": "setCache",
+        "func": "let cache = global.get(\"cache\") || {};\ncache[msg.filename] = msg.payload;\nglobal.set(\"cache\", cache);\nmsg.payload = cache[msg.filename];\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 740,
+        "y": 180,
+        "wires": [
+            [
+                "7665522add258aad"
+            ]
+        ]
+    },
+    {
+        "id": "c51399b894c0ef45",
+        "type": "function",
+        "z": "025d5a9e74400e55",
+        "name": "notification",
+        "func": "msg.headers = msg.headers || {};\n\nif (msg.notification) {\n\n    const safeMessage = encodeURIComponent(msg.notification.message);\n    const type = msg.notification.type || 'info';\n\n    msg.headers['HX-Trigger'] = `{\"showToast\":{\"message\":\"${safeMessage}\",\"type\":\"${type}\"}}`;\n\n    msg.headers['Cache-Control'] = 'no-store';\n    msg.headers['Access-Control-Expose-Headers'] = 'HX-Trigger';\n} else {\n    delete msg.headers['HX-Trigger'];\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 490,
+        "y": 400,
+        "wires": [
+            [
+                "bda73fa3568b8460"
+            ]
+        ]
+    },
+    {
+        "id": "0bdc91aa9c6b4624",
+        "type": "function",
+        "z": "07d931553ed4e880",
+        "name": "setMainFile",
+        "func": "const page = env.get(\"page\") || msg.page;\nconst projectPath = env.get(\"PROJECT_PATH\");\nlet cache = global.get(\"cache\") || {};\n\n\nmsg.project_path = projectPath;\nmsg.filename = `${projectPath}/public/pages/${page}.html`;\nconst cache_component = cache[msg.filename];\n\nif (!cache_component){\n    msg.is_catche = false;\n} else {\n    msg.payload = cache_component\n    msg.is_catche = true;\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 170,
+        "y": 100,
+        "wires": [
+            [
+                "22de0d6994cd5508"
+            ]
+        ]
+    },
+    {
+        "id": "beca75caf5317bea",
+        "type": "switch",
+        "z": "07d931553ed4e880",
+        "name": "has <Component />?",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "regex",
+                "v": "<([A-Z][A-Za-z0-9_-]*)\\s*(?:\\/>|>.*?<\\/\\1>)",
+                "vt": "str",
+                "case": false
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 220,
+        "y": 280,
+        "wires": [
+            [
+                "32d647c15d813dc9"
+            ],
+            [
+                "429da8d4b955f231"
+            ]
+        ]
+    },
+    {
+        "id": "32d647c15d813dc9",
+        "type": "function",
+        "z": "07d931553ed4e880",
+        "name": "findComponents",
+        "func": "msg.iterationCount = (msg.iterationCount || 0) + 1;\nconst maxRecursion = env.get(\"maxRecursion\") || 10;\n\nif (msg.iterationCount > maxRecursion) {\n  node.error(\"Recursion limit exceeded\", msg);\n  return null;\n}\n\nconst mainTemplate = msg.payload;\nconst regex = /<([A-Z][A-Za-z0-9_-]*)\\s*(?:\\/>|>.*?<\\/\\1>)/gs;\nconst matches = [...mainTemplate.matchAll(regex)];\n\nlet foundTags = [];\n\nif (matches.length > 0) {\n  foundTags = [...new Set(matches.map(match => match[1]))];\n}\n\nmsg.payload = foundTags;\nmsg.mainTemplate = mainTemplate;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 200,
+        "y": 220,
+        "wires": [
+            [
+                "3104d30370a5a510"
+            ]
+        ]
+    },
+    {
+        "id": "0107479730beefe5",
+        "type": "function",
+        "z": "07d931553ed4e880",
+        "name": "buildPath",
+        "func": "const component = msg.payload;\nlet cache = global.get(\"cache\") || {};\n\nmsg.componentName = component;\nmsg.filename = `${msg.project_path}/public/components/${component}.html`;\n\nconst cache_component = cache[msg.filename];\nif (!cache_component) {\n    msg.is_catche = false;\n} else {\n    msg.payload = cache_component\n    msg.is_catche = true;\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 220,
+        "wires": [
+            [
+                "e727200fb4f87b24"
+            ]
+        ]
+    },
+    {
+        "id": "8efddcd11596cefe",
+        "type": "change",
+        "z": "07d931553ed4e880",
+        "name": "template",
+        "rules": [
+            {
+                "t": "set",
+                "p": "template",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "x": 880,
+        "y": 200,
+        "wires": [
+            [
+                "348e14d3f6580c79"
+            ]
+        ]
+    },
+    {
+        "id": "e236a27e13a60c83",
+        "type": "join",
+        "z": "07d931553ed4e880",
+        "name": "joinComponents",
+        "mode": "custom",
+        "build": "object",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "componentName",
+        "joiner": "",
+        "joinerType": "str",
+        "useparts": true,
+        "accumulate": false,
+        "timeout": "",
+        "count": "",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 860,
+        "y": 280,
+        "wires": [
+            [
+                "95280c0b8a729fe9"
+            ]
+        ]
+    },
+    {
+        "id": "95280c0b8a729fe9",
+        "type": "function",
+        "z": "07d931553ed4e880",
+        "name": "replace <component>",
+        "func": "const html = msg.mainTemplate;\nconst components = msg.payload;\nconst regex = /<([A-Z][A-Za-z0-9_-]*)\\s*(?:\\/>|>.*?<\\/\\1>)/gs;\n\nmsg.payload = html.replace(regex, (match, name) => {\n  return components[name] || match;\n});\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1080,
+        "y": 280,
+        "wires": [
+            [
+                "beca75caf5317bea"
+            ]
+        ]
+    },
+    {
+        "id": "8a1f3c2e7b9d4e61",
+        "type": "function",
+        "z": "07d931553ed4e880",
+        "name": "notification",
+        "func": "msg.headers = msg.headers || {};\n\nif (msg.notification) {\n\n    const safeMessage = encodeURIComponent(msg.notification.message);\n    const type = msg.notification.type || 'info';\n\n    msg.headers['HX-Trigger'] = `{\"showToast\":{\"message\":\"${safeMessage}\",\"type\":\"${type}\"}}`;\n\n    msg.headers['Cache-Control'] = 'no-store';\n    msg.headers['Access-Control-Expose-Headers'] = 'HX-Trigger';\n} else {\n    delete msg.headers['HX-Trigger'];\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 380,
+        "wires": [
+            [
+                "5d336179495938c8"
+            ]
+        ]
+    },
+    {
+        "id": "5d336179495938c8",
+        "type": "template",
+        "z": "07d931553ed4e880",
+        "name": "render output",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "",
+        "output": "str",
+        "x": 690,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "348e14d3f6580c79",
+        "type": "template",
+        "z": "07d931553ed4e880",
+        "name": "",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "",
+        "output": "str",
+        "x": 1040,
+        "y": 200,
+        "wires": [
+            [
+                "e236a27e13a60c83"
+            ]
+        ]
+    },
+    {
+        "id": "429da8d4b955f231",
+        "type": "change",
+        "z": "07d931553ed4e880",
+        "name": "",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload",
+                "pt": "msg",
+                "to": "template",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 250,
+        "y": 380,
+        "wires": [
+            [
+                "8a1f3c2e7b9d4e61"
+            ]
+        ]
+    },
+    {
+        "id": "e727200fb4f87b24",
+        "type": "switch",
+        "z": "07d931553ed4e880",
+        "name": "",
+        "property": "is_catche",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "false"
+            },
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 650,
+        "y": 220,
+        "wires": [
+            [
+                "6c48b50bfc1c0ff3"
+            ],
+            [
+                "8efddcd11596cefe"
+            ]
+        ]
+    },
+    {
+        "id": "22de0d6994cd5508",
+        "type": "switch",
+        "z": "07d931553ed4e880",
         "name": "",
         "property": "is_catche",
         "propertyType": "msg",
@@ -433,20 +865,56 @@
         "repair": false,
         "outputs": 2,
         "x": 310,
-        "y": 120,
+        "y": 100,
         "wires": [
             [
-                "762cb7879b08d536"
+                "742b337f1d2ef78b"
             ],
             [
-                "405511c69dbbca9e"
+                "c141a9bacad2ed7d"
             ]
         ]
     },
     {
-        "id": "762cb7879b08d536",
+        "id": "3104d30370a5a510",
+        "type": "split",
+        "z": "07d931553ed4e880",
+        "name": "",
+        "splt": "\\n",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "property": "payload",
+        "x": 370,
+        "y": 220,
+        "wires": [
+            [
+                "0107479730beefe5"
+            ]
+        ]
+    },
+    {
+        "id": "233f16e97a359678",
+        "type": "link in",
+        "z": "07d931553ed4e880",
+        "name": "link in 1",
+        "links": [
+            "c141a9bacad2ed7d"
+        ],
+        "x": 55,
+        "y": 280,
+        "wires": [
+            [
+                "beca75caf5317bea"
+            ]
+        ]
+    },
+    {
+        "id": "742b337f1d2ef78b",
         "type": "file in",
-        "z": "025d5a9e74400e55",
+        "z": "07d931553ed4e880",
         "name": "loadMainHtml",
         "filename": "filename",
         "filenameType": "msg",
@@ -454,18 +922,18 @@
         "sendError": false,
         "encoding": "none",
         "allProps": false,
-        "x": 160,
-        "y": 60,
+        "x": 180,
+        "y": 40,
         "wires": [
             [
-                "4827d61356ac942d"
+                "aa33e12374e121f1"
             ]
         ]
     },
     {
-        "id": "4827d61356ac942d",
+        "id": "aa33e12374e121f1",
         "type": "function",
-        "z": "025d5a9e74400e55",
+        "z": "07d931553ed4e880",
         "name": "setCache",
         "func": "let cache = global.get(\"cache\") || {};\ncache[msg.filename] = msg.payload;\nglobal.set(\"cache\", cache);\nmsg.payload = cache[msg.filename];\nreturn msg;",
         "outputs": 1,
@@ -474,11 +942,62 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 320,
-        "y": 60,
+        "x": 360,
+        "y": 40,
         "wires": [
             [
-                "405511c69dbbca9e"
+                "c141a9bacad2ed7d"
+            ]
+        ]
+    },
+    {
+        "id": "c141a9bacad2ed7d",
+        "type": "link out",
+        "z": "07d931553ed4e880",
+        "name": "link out 2",
+        "mode": "link",
+        "links": [
+            "233f16e97a359678"
+        ],
+        "x": 475,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "6c48b50bfc1c0ff3",
+        "type": "file in",
+        "z": "07d931553ed4e880",
+        "name": "loadComponent",
+        "filename": "filename",
+        "filenameType": "msg",
+        "format": "utf8",
+        "sendError": false,
+        "encoding": "none",
+        "x": 520,
+        "y": 160,
+        "wires": [
+            [
+                "ef89ccfb598a04b7"
+            ]
+        ]
+    },
+    {
+        "id": "ef89ccfb598a04b7",
+        "type": "function",
+        "z": "07d931553ed4e880",
+        "name": "setCache",
+        "func": "let cache = global.get(\"cache\") || {};\ncache[msg.filename] = msg.payload;\nglobal.set(\"cache\", cache);\nmsg.payload = cache[msg.filename];\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 700,
+        "y": 160,
+        "wires": [
+            [
+                "8efddcd11596cefe"
             ]
         ]
     },
@@ -490,12 +1009,12 @@
         "env": [
             {
                 "name": "mainComponent",
-                "value": "todo",
+                "value": "Todo",
                 "type": "str"
             }
         ],
-        "x": 530,
-        "y": 420,
+        "x": 510,
+        "y": 540,
         "wires": [
             [
                 "211265ac1b71ea62"
@@ -503,109 +1022,131 @@
         ]
     },
     {
-        "id": "55374800c3d2dc95",
-        "type": "http in",
+        "id": "5c2acfd5a03c28dc",
+        "type": "comment",
         "z": "5ccba3331b3862fe",
         "g": "cf522e74c2f1fece",
-        "name": "projectPages",
-        "url": "/pages/:page",
+        "name": "Bootstraping",
+        "info": "",
+        "x": 1130,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "89bc1ee1438620e8",
+        "type": "http in",
+        "z": "5ccba3331b3862fe",
+        "name": "",
+        "url": "/components/todo",
         "method": "get",
         "upload": false,
         "swaggerDoc": "",
-        "x": 130,
-        "y": 160,
+        "x": 140,
+        "y": 540,
         "wires": [
             [
-                "a6b05be79e90cd63"
+                "6d6308fb346dd11d"
             ]
         ]
     },
     {
-        "id": "0cd06ad91723dcfd",
-        "type": "template",
+        "id": "211265ac1b71ea62",
+        "type": "http response",
         "z": "5ccba3331b3862fe",
-        "g": "cf522e74c2f1fece",
         "name": "",
-        "field": "payload",
-        "fieldType": "flow",
-        "format": "handlebars",
-        "syntax": "mustache",
-        "template": "",
-        "output": "str",
-        "x": 860,
-        "y": 160,
-        "wires": [
-            [
-                "1855405a76f46c0d"
-            ]
-        ]
+        "statusCode": "200",
+        "headers": {},
+        "x": 700,
+        "y": 540,
+        "wires": []
     },
     {
-        "id": "1e36ab6ddd737d82",
-        "type": "file in",
-        "z": "5ccba3331b3862fe",
-        "g": "cf522e74c2f1fece",
-        "name": ":page.html",
-        "filename": "filename",
-        "filenameType": "msg",
-        "format": "utf8",
-        "chunk": false,
-        "sendError": false,
-        "encoding": "none",
-        "allProps": false,
-        "x": 470,
-        "y": 160,
-        "wires": [
-            [
-                "d888716296a6ddb1"
-            ]
-        ]
-    },
-    {
-        "id": "a6b05be79e90cd63",
+        "id": "6d6308fb346dd11d",
         "type": "function",
         "z": "5ccba3331b3862fe",
-        "g": "cf522e74c2f1fece",
-        "name": "filename",
-        "func": "const projectPath = env.get(\"PROJECT_PATH\");\nlet filename = `${projectPath}/pages/${msg.req.params.page}.html`\n\nmsg.filename = filename\n\nreturn msg;",
+        "name": "todos",
+        "func": "msg.todos = [\n    { id: 1, title: \"Buy milk\", done: false },\n    { id: 2, title: \"Do your homework\", done: true }\n];\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 300,
-        "y": 160,
+        "x": 350,
+        "y": 540,
         "wires": [
             [
-                "1e36ab6ddd737d82"
+                "bfc67594ce9932ab"
             ]
         ]
     },
     {
-        "id": "1855405a76f46c0d",
-        "type": "http response",
+        "id": "39b97c0ed1067938",
+        "type": "function",
+        "z": "5ccba3331b3862fe",
+        "g": "cf522e74c2f1fece",
+        "name": "clearCache",
+        "func": "global.set(\"cache\", {});\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 490,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d3d2155d2d358b96",
+        "type": "inject",
         "z": "5ccba3331b3862fe",
         "g": "cf522e74c2f1fece",
         "name": "",
-        "statusCode": "200",
-        "headers": {},
-        "x": 1040,
-        "y": 160,
-        "wires": []
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 150,
+        "y": 260,
+        "wires": [
+            [
+                "39b97c0ed1067938"
+            ]
+        ]
+    },
+    {
+        "id": "e213f8a2a805cbd6",
+        "type": "watch",
+        "z": "5ccba3331b3862fe",
+        "g": "cf522e74c2f1fece",
+        "name": "",
+        "files": "./data/projects/nodered-htmx-starter/public",
+        "recursive": "",
+        "x": 260,
+        "y": 200,
+        "wires": [
+            [
+                "39b97c0ed1067938"
+            ]
+        ]
     },
     {
         "id": "c43a8ccfca68adba",
         "type": "http in",
         "z": "5ccba3331b3862fe",
         "g": "cf522e74c2f1fece",
-        "name": "indexPage",
+        "name": "mainLayout",
         "url": "/",
         "method": "get",
         "upload": false,
         "skipBodyParsing": false,
         "swaggerDoc": "",
-        "x": 120,
+        "x": 130,
         "y": 80,
         "wires": [
             [
@@ -619,128 +1160,18 @@
         "z": "5ccba3331b3862fe",
         "g": "cf522e74c2f1fece",
         "name": "filename",
-        "func": "let filename;\nconst projectPath = env.get(\"PROJECT_PATH\");\nif (msg.req.url.endsWith(\"manifest.webmanifest\")) {\n    let projectName = \"\"; \n    if (msg.req.headers.referer) {\n        let parts = msg.req.headers.referer.split(\"/\");\n        projectName = parts[parts.length - 1];\n    }\n    filename = `${projectPath}/index.html`;\n} else {\n    filename = `${projectPath}/index.html`;\n}\n\nmsg.filename = filename;\nreturn msg;\n",
+        "func": "let filename;\nconst projectPath = env.get(\"PROJECT_PATH\");\nif (msg.req.url.endsWith(\"manifest.webmanifest\")) {\n    let projectName = \"\"; \n    if (msg.req.headers.referer) {\n        let parts = msg.req.headers.referer.split(\"/\");\n        projectName = parts[parts.length - 1];\n    }\n    filename = `${projectPath}/public/index.html`;\n} else {\n    filename = `${projectPath}/public/index.html`;\n}\n\nmsg.filename = filename;\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 300,
+        "x": 440,
         "y": 80,
         "wires": [
             [
                 "56fc02f22a459786"
-            ]
-        ]
-    },
-    {
-        "id": "5c2acfd5a03c28dc",
-        "type": "comment",
-        "z": "5ccba3331b3862fe",
-        "g": "cf522e74c2f1fece",
-        "name": "Pages",
-        "info": "",
-        "x": 1050,
-        "y": 240,
-        "wires": []
-    },
-    {
-        "id": "http_in_static",
-        "type": "http in",
-        "z": "5ccba3331b3862fe",
-        "g": "cf522e74c2f1fece",
-        "name": "Static files",
-        "url": "/assets/:filename",
-        "method": "get",
-        "upload": false,
-        "swaggerDoc": "",
-        "x": 120,
-        "y": 240,
-        "wires": [
-            [
-                "func_static"
-            ]
-        ]
-    },
-    {
-        "id": "func_static",
-        "type": "function",
-        "z": "5ccba3331b3862fe",
-        "g": "cf522e74c2f1fece",
-        "name": "resolve file",
-        "func": "let project = msg.req.params.project_name;\nlet file = msg.req.params.filename;\nconst projectPath = env.get(\"PROJECT_PATH\");\nmsg.filename = `${projectPath}/assets/${file}`;\n\nlet ext = file.split('.').pop().toLowerCase();\nlet mime = {\n    css: \"text/css\",\n    js: \"application/javascript\",\n    png: \"image/png\",\n    jpg: \"image/jpeg\",\n    jpeg: \"image/jpeg\",\n    svg: \"image/svg+xml\"\n};\nmsg.headers = {\"Content-Type\": mime[ext] || \"application/octet-stream\"};\n\nreturn msg;",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 310,
-        "y": 240,
-        "wires": [
-            [
-                "file_in_static"
-            ]
-        ]
-    },
-    {
-        "id": "file_in_static",
-        "type": "file in",
-        "z": "5ccba3331b3862fe",
-        "g": "cf522e74c2f1fece",
-        "name": "read asset",
-        "filename": "filename",
-        "filenameType": "msg",
-        "format": "",
-        "chunk": false,
-        "sendError": false,
-        "encoding": "none",
-        "x": 540,
-        "y": 240,
-        "wires": [
-            [
-                "http_resp_static"
-            ]
-        ]
-    },
-    {
-        "id": "http_resp_static",
-        "type": "http response",
-        "z": "5ccba3331b3862fe",
-        "g": "cf522e74c2f1fece",
-        "name": "serve asset",
-        "statusCode": "",
-        "headers": {},
-        "x": 730,
-        "y": 240,
-        "wires": []
-    },
-    {
-        "id": "d888716296a6ddb1",
-        "type": "change",
-        "z": "5ccba3331b3862fe",
-        "g": "cf522e74c2f1fece",
-        "name": "",
-        "rules": [
-            {
-                "t": "set",
-                "p": "template",
-                "pt": "msg",
-                "to": "payload",
-                "tot": "msg"
-            }
-        ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 670,
-        "y": 160,
-        "wires": [
-            [
-                "0cd06ad91723dcfd"
             ]
         ]
     },
@@ -756,7 +1187,7 @@
         "syntax": "mustache",
         "template": "",
         "output": "str",
-        "x": 860,
+        "x": 980,
         "y": 80,
         "wires": [
             [
@@ -777,7 +1208,7 @@
         "sendError": false,
         "encoding": "none",
         "allProps": false,
-        "x": 470,
+        "x": 610,
         "y": 80,
         "wires": [
             [
@@ -793,7 +1224,7 @@
         "name": "",
         "statusCode": "200",
         "headers": {},
-        "x": 1040,
+        "x": 1140,
         "y": 80,
         "wires": []
     },
@@ -817,7 +1248,7 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 670,
+        "x": 810,
         "y": 80,
         "wires": [
             [
@@ -826,35 +1257,226 @@
         ]
     },
     {
-        "id": "89bc1ee1438620e8",
-        "type": "http in",
+        "id": "func_static",
+        "type": "function",
         "z": "5ccba3331b3862fe",
-        "name": "",
-        "url": "/components/todo",
-        "method": "get",
-        "upload": false,
-        "swaggerDoc": "",
-        "x": 160,
-        "y": 420,
+        "g": "cf522e74c2f1fece",
+        "name": "resolve file",
+        "func": "let project = msg.req.params.project_name;\nlet file = msg.req.params.filename;\nconst projectPath = env.get(\"PROJECT_PATH\");\nmsg.filename = `${projectPath}/public/assets/${file}`;\n\nlet ext = file.split('.').pop().toLowerCase();\nlet mime = {\n    css: \"text/css\",\n    js: \"application/javascript\",\n    png: \"image/png\",\n    jpg: \"image/jpeg\",\n    jpeg: \"image/jpeg\",\n    svg: \"image/svg+xml\"\n};\nmsg.headers = {\"Content-Type\": mime[ext] || \"application/octet-stream\"};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 140,
         "wires": [
             [
-                "6d6308fb346dd11d"
+                "file_in_static"
             ]
         ]
     },
     {
-        "id": "211265ac1b71ea62",
+        "id": "file_in_static",
+        "type": "file in",
+        "z": "5ccba3331b3862fe",
+        "g": "cf522e74c2f1fece",
+        "name": "read asset",
+        "filename": "filename",
+        "filenameType": "msg",
+        "format": "",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "x": 610,
+        "y": 140,
+        "wires": [
+            [
+                "http_resp_static"
+            ]
+        ]
+    },
+    {
+        "id": "http_resp_static",
+        "type": "http response",
+        "z": "5ccba3331b3862fe",
+        "g": "cf522e74c2f1fece",
+        "name": "serve asset",
+        "statusCode": "",
+        "headers": {},
+        "x": 1130,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "http_in_static",
+        "type": "http in",
+        "z": "5ccba3331b3862fe",
+        "g": "cf522e74c2f1fece",
+        "name": "Static files",
+        "url": "/assets/:filename",
+        "method": "get",
+        "upload": false,
+        "skipBodyParsing": false,
+        "swaggerDoc": "",
+        "x": 120,
+        "y": 140,
+        "wires": [
+            [
+                "func_static"
+            ]
+        ]
+    },
+    {
+        "id": "828692428f046657",
         "type": "http response",
         "z": "5ccba3331b3862fe",
         "name": "",
         "statusCode": "200",
         "headers": {},
-        "x": 720,
-        "y": 420,
+        "x": 700,
+        "y": 400,
         "wires": []
     },
     {
-        "id": "6d6308fb346dd11d",
+        "id": "40e7e3ae61fbbd33",
+        "type": "http in",
+        "z": "5ccba3331b3862fe",
+        "name": "homePage",
+        "url": "/pages/home",
+        "method": "get",
+        "upload": false,
+        "skipBodyParsing": false,
+        "swaggerDoc": "",
+        "x": 100,
+        "y": 400,
+        "wires": [
+            [
+                "f964fcf35e39e4f5"
+            ]
+        ]
+    },
+    {
+        "id": "f964fcf35e39e4f5",
+        "type": "subflow:07d931553ed4e880",
+        "z": "5ccba3331b3862fe",
+        "name": "home",
+        "env": [
+            {
+                "name": "page",
+                "value": "home",
+                "type": "str"
+            }
+        ],
+        "x": 530,
+        "y": 400,
+        "wires": [
+            [
+                "828692428f046657"
+            ]
+        ]
+    },
+    {
+        "id": "28e1a882888fd06c",
+        "type": "http response",
+        "z": "5ccba3331b3862fe",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 700,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "628b3e7323c8de08",
+        "type": "http in",
+        "z": "5ccba3331b3862fe",
+        "name": "todoPage",
+        "url": "/pages/todo",
+        "method": "get",
+        "upload": false,
+        "skipBodyParsing": false,
+        "swaggerDoc": "",
+        "x": 100,
+        "y": 480,
+        "wires": [
+            [
+                "77331f482db1a351"
+            ]
+        ]
+    },
+    {
+        "id": "bcd885dd42ef14bf",
+        "type": "subflow:07d931553ed4e880",
+        "z": "5ccba3331b3862fe",
+        "name": "todo",
+        "env": [
+            {
+                "name": "page",
+                "value": "todo",
+                "type": "str"
+            }
+        ],
+        "x": 530,
+        "y": 480,
+        "wires": [
+            [
+                "28e1a882888fd06c"
+            ]
+        ]
+    },
+    {
+        "id": "059ffa9c9156b14e",
+        "type": "http response",
+        "z": "5ccba3331b3862fe",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 700,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "30b8651040f6f3f8",
+        "type": "http in",
+        "z": "5ccba3331b3862fe",
+        "name": "contactsPage",
+        "url": "/pages/contacts",
+        "method": "get",
+        "upload": false,
+        "skipBodyParsing": false,
+        "swaggerDoc": "",
+        "x": 110,
+        "y": 620,
+        "wires": [
+            [
+                "4183710265a7b392"
+            ]
+        ]
+    },
+    {
+        "id": "4183710265a7b392",
+        "type": "subflow:07d931553ed4e880",
+        "z": "5ccba3331b3862fe",
+        "name": "contacts",
+        "env": [
+            {
+                "name": "page",
+                "value": "contacts",
+                "type": "str"
+            }
+        ],
+        "x": 520,
+        "y": 620,
+        "wires": [
+            [
+                "059ffa9c9156b14e"
+            ]
+        ]
+    },
+    {
+        "id": "77331f482db1a351",
         "type": "function",
         "z": "5ccba3331b3862fe",
         "name": "todos",
@@ -865,50 +1487,11 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 370,
-        "y": 420,
+        "x": 350,
+        "y": 480,
         "wires": [
             [
-                "bfc67594ce9932ab"
-            ]
-        ]
-    },
-    {
-        "id": "39b97c0ed1067938",
-        "type": "function",
-        "z": "5ccba3331b3862fe",
-        "g": "cf522e74c2f1fece",
-        "name": "clearCache",
-        "func": "global.set(\"cache\", {});\nreturn msg;\n",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 310,
-        "y": 300,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "d3d2155d2d358b96",
-        "type": "inject",
-        "z": "5ccba3331b3862fe",
-        "g": "cf522e74c2f1fece",
-        "name": "",
-        "props": [],
-        "repeat": "60",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "x": 130,
-        "y": 300,
-        "wires": [
-            [
-                "39b97c0ed1067938"
+                "bcd885dd42ef14bf"
             ]
         ]
     }
