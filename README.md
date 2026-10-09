@@ -8,6 +8,7 @@ A starter project for building web applications with [Node-RED](https://nodered.
 - **Components** - reusable HTML files with nesting (`<TodoItem/>`) and slots (`<Card>...</Card>`)
 - **Real URLs** - every page has its own address; refresh, direct links and the back button work
 - **Partial updates** - an action or a filter refreshes only the blocks it changed (`hx-select`, `hx-swap-oob`)
+- **Form validation** - a `Validate` subflow with JSON rules, errors are shown next to the fields
 - **Built-in cache** - templates are cached in memory and reloaded automatically when files change
 - **Toasts, modal and loader** out of the box, no CSS framework required
 
@@ -62,7 +63,7 @@ The same endpoint serves two kinds of requests. `View` decides by the `HX-Reques
 
 ```
 nodered-htmx-starter/
-├── flows.json               # Starter tab (endpoints) + View subflow
+├── flows.json               # Starter tab (endpoints) + View and Validate subflows
 ├── flows_cred.json
 ├── package.json
 └── public/
@@ -270,8 +271,8 @@ A small CRUD in the *ToDo* group. Tasks live in the global context variable `tod
 |---|---|---|---|
 | `GET /pages/todo?filter=` | `todos` | page `todo` | - |
 | `GET /todos/:id/edit` | `editTodo` | component `TodoForm` (into the modal) | Task not found |
-| `POST /todos` | `createTodo` | component `TodoUpdate` | Task created / Title is required |
-| `PUT /todos/:id` | `updateTodo` | component `TodoUpdate` | Task updated |
+| `POST /todos` | `Validate` → `createTodo` | component `TodoUpdate` (422: `TodoForm` with errors) | Task created |
+| `PUT /todos/:id` | `Validate` → `updateTodo` | component `TodoUpdate` (422: `TodoForm` with errors) | Task updated |
 | `PATCH /todos/:id/toggle` | `toggleTodo` | component `TodoUpdate` | Task completed / reopened |
 | `DELETE /todos/:id` | `deleteTodo` | component `TodoUpdate` | Task deleted |
 
@@ -291,28 +292,61 @@ Components of the page:
 | `TodoFilter` (`#todo-filter`) | links **All / Active / Done** - [tool 2](#2-hx-select-takes-the-block-from-the-page) |
 | `Todo` (`#todo-list`) | the list, `TodoItem` per task |
 | `TodoItem` | checkbox (toggle), Edit (modal), Delete |
-| `TodoForm` | one form for create and edit: without `msg.todo` it sends `POST /todos`, with `msg.todo` - `PUT /todos/:id` |
+| `TodoForm` | one form for create and edit: without `msg.form.id` it sends `POST /todos`, with it - `PUT /todos/:id`; shows `msg.errors` |
 | `TodoUpdate` | response of the actions: `Todo` + the counter with `hx-swap-oob` - [tool 3](#3-hx-swap-oob-the-server-updates-one-more-block) |
 
 `filterTodos` is a subroutine (`link in` → function → `link out` in return mode) called with **link call** from the shared tail and from the page endpoint. It counts active tasks (`msg.activeCount`) and filters the list. A page request takes the filter from its own URL (`?filter=done`), an action takes it from the page it was sent from (the `HX-Current-URL` header HTMX sends with every request). So completing a task on the *Active* tab removes it from the list.
 
 ```javascript
-// createTodo
+// createTodo - the title is already validated and trimmed by Validate
 const todos = global.get("todos") || [];
-const title = String(msg.payload.title || "").trim();
 
-if (!title) {
-    msg.notification = { message: "Title is required", type: "error" };
-} else {
-    const id = todos.reduce((max, t) => Math.max(max, t.id), 0) + 1;
-    todos.push({ id, title, done: false });
-    global.set("todos", todos);
-    msg.notification = { message: "Task created", type: "success" };
-}
+const id = todos.reduce((max, t) => Math.max(max, t.id), 0) + 1;
+todos.push({ id, title: msg.payload.title, done: false });
+global.set("todos", todos);
+msg.notification = { message: "Task created", type: "success" };
 
 msg.todos = todos;
 return msg;
 ```
+
+
+## 🛡 Form Validation
+
+The `Validate` subflow checks `msg.payload` before the business logic. It has two outputs:
+
+```
+                     ┌ valid ──► business logic ─► ...
+HTTP IN ─► Validate ─┤
+                     └ invalid ► View (Component, the form) ─► HTTP Response   (422)
+```
+
+Rules are set as JSON in the **Rules** field of the node:
+
+```json
+{ "title": { "label": "Title", "required": true, "maxLength": 100 } }
+```
+
+| Rule | Meaning |
+|---|---|
+| `required` | the value must not be empty (values are trimmed) |
+| `minLength`, `maxLength` | length limits |
+| `pattern` + `message` | a regular expression and the error text for it |
+| `label` | field name used in the messages (`Title is required`) |
+
+- **valid**: `msg.payload` with trimmed values goes on to the business logic;
+- **invalid**: `msg.errors = { title: "Title is required" }`, `msg.form` = submitted values + route params (`id`), `msg.statusCode = 422`. The second output goes to a `View` that renders the form again.
+
+The form shows the errors and keeps the entered values:
+
+```html
+<input name="title" value="{{form.title}}" class="{{#errors.title}}invalid{{/errors.title}}">
+{{#errors.title}}<div class="field-error">{{errors.title}}</div>{{/errors.title}}
+```
+
+On the client a `422` response **replaces the form that sent the request** instead of the usual `hx-target` (`main.js`, `htmx:beforeSwap`). HTMX does not swap 4xx responses by default, so this one handler makes it work for any form: the modal stays open, the list is not touched. The modal closes only on a `2xx` response.
+
+In the ToDo example `POST /todos` and `PUT /todos/:id` go through `Validate`, and both invalid outputs share one `View (TodoForm)` → `HTTP Response`.
 
 
 ## 🔔 UI Helpers (`main.js` + `style.css`)
@@ -342,7 +376,7 @@ msg.notification = { message: "Task saved", type: "success" }; // success | erro
   <button hx-get="/todos/1/edit" hx-target="#ModalContent">Edit</button>
   ```
 
-It closes after a successful HTMX request sent from inside the modal (e.g. form submit), by a `[data-modal-close]` button, a click on the backdrop or `Escape`.
+It closes after a `2xx` response to an HTMX request sent from inside the modal (e.g. form submit; a `422` with validation errors keeps it open), by a `[data-modal-close]` button, a click on the backdrop or `Escape`.
 
 ### Loader
 

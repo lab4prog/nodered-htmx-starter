@@ -109,6 +109,17 @@ nav a.active {
     padding: 6px 8px;
 }
 
+.modal-content input.invalid {
+    border: 1px solid #dc3545;
+    outline-color: #dc3545;
+}
+
+.field-error {
+    margin-top: -8px;
+    color: #dc3545;
+    font-size: 0.9em;
+}
+
 .modal-content .actions {
     display: flex;
     justify-content: flex-end;

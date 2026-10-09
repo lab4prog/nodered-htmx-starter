@@ -1,8 +1,10 @@
-{{! create: no msg.todo -> POST /todos, edit: msg.todo -> PUT /todos/:id }}
-<form {{#todo}}hx-put="/todos/{{id}}"{{/todo}}{{^todo}}hx-post="/todos"{{/todo}}
+{{! create: no form.id -> POST /todos, edit: form.id -> PUT /todos/:id. A 422 from the Validate subflow re-renders this form with msg.errors }}
+<form {{#form.id}}hx-put="/todos/{{form.id}}"{{/form.id}}{{^form.id}}hx-post="/todos"{{/form.id}}
     hx-target="#todo-list" hx-swap="outerHTML">
-    <h2>{{#todo}}Edit task{{/todo}}{{^todo}}New task{{/todo}}</h2>
-    <input name="title" value="{{todo.title}}" placeholder="Title" required autofocus>
+    <h2>{{#form.id}}Edit task{{/form.id}}{{^form.id}}New task{{/form.id}}</h2>
+    <input name="title" value="{{form.title}}" placeholder="Title" autofocus
+        class="{{#errors.title}}invalid{{/errors.title}}">
+    {{#errors.title}}<div class="field-error">{{errors.title}}</div>{{/errors.title}}
     <div class="actions">
         <button type="button" data-modal-close>Cancel</button>
         <button type="submit">Save</button>

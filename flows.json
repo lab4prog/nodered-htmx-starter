@@ -89,6 +89,71 @@
         "icon": "font-awesome/fa-braille"
     },
     {
+        "id": "697c8c6f713661f2",
+        "type": "subflow",
+        "name": "Validate",
+        "info": "Validates msg.payload with the rules from the `rules` env (JSON).\n\n- output 1 (valid): msg.payload with trimmed values\n- output 2 (invalid): msg.errors = { field: message }, msg.form = submitted values + route params, msg.statusCode = 422 - render the form again with View",
+        "category": "",
+        "in": [
+            {
+                "x": 60,
+                "y": 80,
+                "wires": [
+                    {
+                        "id": "e62feeaa3d32eced"
+                    }
+                ]
+            }
+        ],
+        "out": [
+            {
+                "x": 530,
+                "y": 60,
+                "wires": [
+                    {
+                        "id": "0a0d7db1fb0fe6f6",
+                        "port": 0
+                    }
+                ]
+            },
+            {
+                "x": 530,
+                "y": 120,
+                "wires": [
+                    {
+                        "id": "0a0d7db1fb0fe6f6",
+                        "port": 1
+                    }
+                ]
+            }
+        ],
+        "env": [
+            {
+                "name": "rules",
+                "type": "json",
+                "value": "{}",
+                "ui": {
+                    "label": {
+                        "en-US": "Rules"
+                    },
+                    "type": "input",
+                    "opts": {
+                        "types": [
+                            "json"
+                        ]
+                    }
+                }
+            }
+        ],
+        "meta": {},
+        "color": "#E2D96E",
+        "outputLabels": [
+            "valid",
+            "invalid"
+        ],
+        "icon": "node-red/alert.svg"
+    },
+    {
         "id": "cf522e74c2f1fece",
         "type": "group",
         "z": "5ccba3331b3862fe",
@@ -122,7 +187,7 @@
         "x": 34,
         "y": 39,
         "w": 1192,
-        "h": 322
+        "h": 304
     },
     {
         "id": "eea2ca176b38c47f",
@@ -152,12 +217,16 @@
             "50762f6746beb41c",
             "7a0c67ffa80f8cd2",
             "b4b7c6183fe0fc6e",
-            "bc04261a42408b58"
+            "bc04261a42408b58",
+            "1451e9a3ff81c31b",
+            "eea3db9e5253529e",
+            "8f50d4f64551b002",
+            "f73a61bbc3263fa7"
         ],
         "x": 34,
         "y": 679,
-        "w": 1312,
-        "h": 442
+        "w": 1292,
+        "h": 582
     },
     {
         "id": "028f3987925e940f",
@@ -640,6 +709,51 @@
         ]
     },
     {
+        "id": "e62feeaa3d32eced",
+        "type": "function",
+        "z": "697c8c6f713661f2",
+        "name": "validate",
+        "func": "// rules (env, JSON): { \"field\": { \"label\", \"required\", \"minLength\", \"maxLength\", \"pattern\", \"message\" } }\nconst rules = env.get(\"rules\") || {};\nconst data = Object.assign({}, msg.payload);\nconst errors = {};\n\nfor (const [field, rule] of Object.entries(rules)) {\n    const value = String(data[field] ?? \"\").trim();\n    const label = rule.label || field;\n    data[field] = value;\n\n    if (rule.required && !value) {\n        errors[field] = `${label} is required`;\n    } else if (value && rule.minLength && value.length < rule.minLength) {\n        errors[field] = `${label} must be at least ${rule.minLength} characters`;\n    } else if (rule.maxLength && value.length > rule.maxLength) {\n        errors[field] = `${label} must be at most ${rule.maxLength} characters`;\n    } else if (value && rule.pattern && !new RegExp(rule.pattern).test(value)) {\n        errors[field] = rule.message || `${label} is invalid`;\n    }\n}\n\nmsg.payload = data;   // trimmed values for the business logic\nmsg.errors = Object.keys(errors).length ? errors : null;\n\nif (msg.errors) {\n    // values for re-rendering the form: submitted fields + route params (e.g. id)\n    msg.form = Object.assign({}, data, msg.req && msg.req.params);\n    msg.statusCode = 422;\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 160,
+        "y": 80,
+        "wires": [
+            [
+                "0a0d7db1fb0fe6f6"
+            ]
+        ]
+    },
+    {
+        "id": "0a0d7db1fb0fe6f6",
+        "type": "switch",
+        "z": "697c8c6f713661f2",
+        "name": "valid?",
+        "property": "errors",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "null"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 2,
+        "x": 310,
+        "y": 80,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
         "id": "5c2acfd5a03c28dc",
         "type": "comment",
         "z": "5ccba3331b3862fe",
@@ -838,8 +952,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 440,
-        "y": 140,
+        "x": 490,
+        "y": 120,
         "wires": [
             [
                 "file_in_static"
@@ -1076,7 +1190,7 @@
         "once": true,
         "onceDelay": 0.1,
         "topic": "",
-        "x": 160,
+        "x": 140,
         "y": 720,
         "wires": [
             [
@@ -1097,7 +1211,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 380,
+        "x": 360,
         "y": 720,
         "wires": [
             []
@@ -1113,11 +1227,11 @@
         "method": "post",
         "upload": false,
         "swaggerDoc": "",
-        "x": 160,
-        "y": 780,
+        "x": 130,
+        "y": 840,
         "wires": [
             [
-                "6b9fa8821cd0352b"
+                "1451e9a3ff81c31b"
             ]
         ]
     },
@@ -1127,15 +1241,15 @@
         "z": "5ccba3331b3862fe",
         "g": "eea2ca176b38c47f",
         "name": "createTodo",
-        "func": "const todos = global.get(\"todos\") || [];\nconst title = String(msg.payload.title || \"\").trim();\n\nif (!title) {\n    msg.notification = { message: \"Title is required\", type: \"error\" };\n} else {\n    const id = todos.reduce((max, t) => Math.max(max, t.id), 0) + 1;\n    todos.push({ id, title, done: false });\n    global.set(\"todos\", todos);\n    msg.notification = { message: \"Task created\", type: \"success\" };\n}\n\nmsg.todos = todos;\nreturn msg;",
+        "func": "const todos = global.get(\"todos\") || [];\n\nconst id = todos.reduce((max, t) => Math.max(max, t.id), 0) + 1;\ntodos.push({ id, title: msg.payload.title, done: false });\nglobal.set(\"todos\", todos);\nmsg.notification = { message: \"Task created\", type: \"success\" };\n\nmsg.todos = todos;\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 710,
-        "y": 780,
+        "x": 690,
+        "y": 840,
         "wires": [
             [
                 "50762f6746beb41c"
@@ -1152,8 +1266,8 @@
         "method": "get",
         "upload": false,
         "swaggerDoc": "",
-        "x": 160,
-        "y": 840,
+        "x": 150,
+        "y": 780,
         "wires": [
             [
                 "0ea9e7a011c922cc"
@@ -1166,15 +1280,15 @@
         "z": "5ccba3331b3862fe",
         "g": "eea2ca176b38c47f",
         "name": "editTodo",
-        "func": "const id = Number(msg.req.params.id);\n\nmsg.todo = (global.get(\"todos\") || []).find(t => t.id === id);\nif (!msg.todo) msg.notification = { message: \"Task not found\", type: \"error\" };\nreturn msg;",
+        "func": "const id = Number(msg.req.params.id);\n\nmsg.form = (global.get(\"todos\") || []).find(t => t.id === id);\nif (!msg.form) msg.notification = { message: \"Task not found\", type: \"error\" };\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 710,
-        "y": 840,
+        "x": 380,
+        "y": 780,
         "wires": [
             [
                 "0c4daf540e0ce1a7"
@@ -1199,8 +1313,8 @@
                 "type": "str"
             }
         ],
-        "x": 920,
-        "y": 840,
+        "x": 600,
+        "y": 780,
         "wires": [
             [
                 "f42a64218de838ae"
@@ -1215,8 +1329,8 @@
         "name": "",
         "statusCode": "",
         "headers": {},
-        "x": 1100,
-        "y": 840,
+        "x": 780,
+        "y": 780,
         "wires": []
     },
     {
@@ -1229,11 +1343,11 @@
         "method": "put",
         "upload": false,
         "swaggerDoc": "",
-        "x": 160,
+        "x": 130,
         "y": 900,
         "wires": [
             [
-                "491c0c6138cc1eb3"
+                "eea3db9e5253529e"
             ]
         ]
     },
@@ -1243,15 +1357,15 @@
         "z": "5ccba3331b3862fe",
         "g": "eea2ca176b38c47f",
         "name": "updateTodo",
-        "func": "const todos = global.get(\"todos\") || [];\nconst todo = todos.find(t => t.id === Number(msg.req.params.id));\nconst title = String(msg.payload.title || \"\").trim();\n\nif (!todo) {\n    msg.notification = { message: \"Task not found\", type: \"error\" };\n} else if (!title) {\n    msg.notification = { message: \"Title is required\", type: \"error\" };\n} else {\n    todo.title = title;\n    global.set(\"todos\", todos);\n    msg.notification = { message: \"Task updated\", type: \"success\" };\n}\n\nmsg.todos = todos;\nreturn msg;",
+        "func": "const todos = global.get(\"todos\") || [];\nconst todo = todos.find(t => t.id === Number(msg.req.params.id));\n\nif (!todo) {\n    msg.notification = { message: \"Task not found\", type: \"error\" };\n} else {\n    todo.title = msg.payload.title;\n    global.set(\"todos\", todos);\n    msg.notification = { message: \"Task updated\", type: \"success\" };\n}\n\nmsg.todos = todos;\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 350,
-        "y": 900,
+        "x": 630,
+        "y": 940,
         "wires": [
             [
                 "50762f6746beb41c"
@@ -1276,8 +1390,8 @@
                 "type": "str"
             }
         ],
-        "x": 1090,
-        "y": 900,
+        "x": 1070,
+        "y": 940,
         "wires": [
             [
                 "49e60be19d7f041a"
@@ -1292,8 +1406,8 @@
         "name": "",
         "statusCode": "",
         "headers": {},
-        "x": 1270,
-        "y": 900,
+        "x": 1250,
+        "y": 940,
         "wires": []
     },
     {
@@ -1307,7 +1421,7 @@
         "upload": false,
         "swaggerDoc": "",
         "x": 160,
-        "y": 960,
+        "y": 1000,
         "wires": [
             [
                 "08d16c6c900bd942"
@@ -1327,8 +1441,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 350,
-        "y": 960,
+        "x": 370,
+        "y": 1000,
         "wires": [
             [
                 "50762f6746beb41c"
@@ -1345,8 +1459,8 @@
         "method": "delete",
         "upload": false,
         "swaggerDoc": "",
-        "x": 160,
-        "y": 1020,
+        "x": 140,
+        "y": 1060,
         "wires": [
             [
                 "0d87c9007d8ac487"
@@ -1366,8 +1480,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 350,
-        "y": 1020,
+        "x": 330,
+        "y": 1060,
         "wires": [
             [
                 "50762f6746beb41c"
@@ -1403,8 +1517,8 @@
         ],
         "linkType": "static",
         "timeout": "30",
-        "x": 920,
-        "y": 900,
+        "x": 900,
+        "y": 940,
         "wires": [
             [
                 "96bc14d121404e7c"
@@ -1418,8 +1532,8 @@
         "g": "eea2ca176b38c47f",
         "name": "filterTodos",
         "links": [],
-        "x": 175,
-        "y": 1080,
+        "x": 155,
+        "y": 1220,
         "wires": [
             [
                 "b4b7c6183fe0fc6e"
@@ -1439,8 +1553,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 380,
-        "y": 1080,
+        "x": 360,
+        "y": 1220,
         "wires": [
             [
                 "bc04261a42408b58"
@@ -1455,8 +1569,8 @@
         "name": "return",
         "mode": "return",
         "links": [],
-        "x": 555,
-        "y": 1080,
+        "x": 535,
+        "y": 1220,
         "wires": []
     },
     {
@@ -1506,6 +1620,92 @@
         "headers": {},
         "x": 590,
         "y": 302,
+        "wires": []
+    },
+    {
+        "id": "1451e9a3ff81c31b",
+        "type": "subflow:697c8c6f713661f2",
+        "z": "5ccba3331b3862fe",
+        "g": "eea2ca176b38c47f",
+        "name": "",
+        "env": [
+            {
+                "name": "rules",
+                "value": "{\"title\":{\"label\":\"Title\",\"required\":true,\"maxLength\":100}}",
+                "type": "json"
+            }
+        ],
+        "x": 380,
+        "y": 840,
+        "wires": [
+            [
+                "6b9fa8821cd0352b"
+            ],
+            [
+                "8f50d4f64551b002"
+            ]
+        ]
+    },
+    {
+        "id": "eea3db9e5253529e",
+        "type": "subflow:697c8c6f713661f2",
+        "z": "5ccba3331b3862fe",
+        "g": "eea2ca176b38c47f",
+        "name": "",
+        "env": [
+            {
+                "name": "rules",
+                "value": "{\"title\":{\"label\":\"Title\",\"required\":true,\"maxLength\":100}}",
+                "type": "json"
+            }
+        ],
+        "x": 380,
+        "y": 900,
+        "wires": [
+            [
+                "491c0c6138cc1eb3"
+            ],
+            [
+                "8f50d4f64551b002"
+            ]
+        ]
+    },
+    {
+        "id": "8f50d4f64551b002",
+        "type": "subflow:8ebee3b55772fac1",
+        "z": "5ccba3331b3862fe",
+        "g": "eea2ca176b38c47f",
+        "name": "TodoForm (errors)",
+        "env": [
+            {
+                "name": "type",
+                "value": "component",
+                "type": "str"
+            },
+            {
+                "name": "name",
+                "value": "TodoForm",
+                "type": "str"
+            }
+        ],
+        "x": 610,
+        "y": 880,
+        "wires": [
+            [
+                "f73a61bbc3263fa7"
+            ]
+        ]
+    },
+    {
+        "id": "f73a61bbc3263fa7",
+        "type": "http response",
+        "z": "5ccba3331b3862fe",
+        "g": "eea2ca176b38c47f",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 930,
+        "y": 880,
         "wires": []
     }
 ]

@@ -73,9 +73,11 @@ document.addEventListener('htmx:afterSwap', function (e) {
     if (e.detail.target.id === 'ModalContent') openModal();
 });
 
-// A successful request sent from inside the modal (e.g. form submit) closes it
+// A 2xx response to a request sent from inside the modal (e.g. form submit) closes it.
+// The status is checked explicitly: a 422 with validation errors is swapped too (see VALIDATION)
 document.addEventListener('htmx:afterRequest', function (e) {
-    if (e.detail.successful && modal.contains(e.detail.elt)) closeModal();
+    const status = e.detail.xhr.status;
+    if (status >= 200 && status < 300 && modal.contains(e.detail.elt)) closeModal();
 });
 
 // Close: [data-modal-close] button, click on the backdrop, Escape
@@ -84,6 +86,19 @@ document.addEventListener('click', function (e) {
 });
 document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') closeModal();
+});
+
+/* VALIDATION */
+// 422 (Validate subflow) = the form with errors: it replaces the form that sent the request
+// instead of the usual hx-target. HTMX does not swap 4xx responses by default.
+document.addEventListener('htmx:beforeSwap', function (e) {
+    if (e.detail.xhr.status !== 422) return;
+    e.detail.shouldSwap = true;
+    e.detail.isError = false;
+    // e.detail.elt here is the target; the element that sent the request is requestConfig.elt
+    const sender = e.detail.requestConfig.elt;
+    e.detail.target = sender.closest('form') || sender;
+    e.detail.swapOverride = 'outerHTML';
 });
 
 /* MODAL COMPONENTS */
