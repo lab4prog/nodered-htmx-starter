@@ -5,32 +5,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NodeRed + HTMX</title>
+    <!-- history restore must request the full page, not an HTMX fragment -->
+    <meta name="htmx-config" content='{"historyRestoreAsHxRequest": false}'>
     <link rel="stylesheet" href="/assets/style.css">
 </head>
 
-<body>
+<body hx-indicator="#indicator">
 
     <nav>
         <li>
-            <a href="#" hx-get="/pages/home" hx-trigger="load, click" hx-target="#main">
+            <a href="/" hx-get="/" hx-target="#main" hx-push-url="true">
                 Home
             </a>
-            <a href="#" hx-get="/pages/todo" hx-trigger="click" hx-target="#main">
+            <a href="/pages/todo" hx-get="/pages/todo" hx-target="#main" hx-push-url="true">
                 ToDo
             </a>
-            <a href="#" hx-get="/pages/contacts" hx-trigger="click" hx-target="#main">
+            <a href="/pages/contacts" hx-get="/pages/contacts" hx-target="#main" hx-push-url="true">
                 Contacts
             </a>
         </li>
     </nav>
 
     <main id="main">
-
+        <slot/>
     </main>
     
     <!-- LOADER -->
-    <div id="indicator" class="htmx-indicator w-100 justify-content-center align-items-center py-5">
-        <div class="spinner-border text-primary" role="status"></div>
+    <div id="indicator" class="htmx-indicator">
+        <div class="spinner" role="status" aria-label="Loading"></div>
     </div>
     <!-- END LOADER -->
 

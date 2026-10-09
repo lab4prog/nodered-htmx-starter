@@ -1,2 +1,10 @@
-<h1>ToDo</h1>
-<Todo/>
+<h1>ToDo <small id="todo-count" class="todo-count">{{activeCount}} active</small></h1>
+<Card>
+    <TodoFilter/>
+    <Todo/>
+    <button type="button" data-modal-component="todo-create">+ New task</button>
+</Card>
+
+<template id="todo-create">
+    <TodoForm/>
+</template>

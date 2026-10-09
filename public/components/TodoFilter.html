@@ -1,0 +1,8 @@
+{{! requests the page and takes two blocks from it: the list (hx-select) and the filter itself (hx-select-oob) }}
+<div id="todo-filter" class="todo-filter"
+    hx-target="#todo-list" hx-select="#todo-list" hx-select-oob="#todo-filter"
+    hx-swap="outerHTML" hx-push-url="true">
+    <a href="/pages/todo?filter=all" hx-get="/pages/todo?filter=all" class="{{#filter.all}}active{{/filter.all}}">All</a>
+    <a href="/pages/todo?filter=active" hx-get="/pages/todo?filter=active" class="{{#filter.active}}active{{/filter.active}}">Active</a>
+    <a href="/pages/todo?filter=done" hx-get="/pages/todo?filter=done" class="{{#filter.done}}active{{/filter.done}}">Done</a>
+</div>

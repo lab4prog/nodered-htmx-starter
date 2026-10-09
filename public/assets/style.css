@@ -2,6 +2,213 @@
     color: #fff;
 }
 
+nav a {
+    text-decoration: none;
+}
+
+nav a.active {
+    text-decoration: underline;
+}
+
+/* CARD */
+.card {
+    max-width: 480px;
+    margin: 16px 0;
+    padding: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* TODO */
+.todo-count {
+    margin-left: 8px;
+    font-size: 0.5em;
+    font-weight: normal;
+    color: #666;
+}
+
+.todo-filter {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.todo-filter a {
+    color: #555;
+    text-decoration: none;
+}
+
+.todo-filter a.active {
+    color: inherit;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.todo-list {
+    list-style: none;
+    margin: 0 0 12px;
+    padding: 0;
+}
+
+.todo-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.todo-item .title {
+    flex: 1;
+}
+
+.todo-item.completed .title {
+    text-decoration: line-through;
+    color: #888;
+}
+
+.todo-list .empty {
+    padding: 6px 0;
+    color: #888;
+}
+
+/* MODAL */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 4000;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-dialog {
+    width: min(400px, calc(100% - 32px));
+    padding: 20px;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.modal-content form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.modal-content h2 {
+    margin: 0;
+}
+
+.modal-content input {
+    padding: 6px 8px;
+}
+
+.modal-content .actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+/* TOASTS (Bootstrap class names, styled here) */
+.toast-container {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.toast {
+    display: none;
+    min-width: 220px;
+    padding: 10px 12px;
+    border-radius: 6px;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.toast.show {
+    display: block;
+}
+
+.toast .d-flex {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.toast .toast-body {
+    flex: 1;
+}
+
+.toast.bg-success {
+    background: #198754;
+}
+
+.toast.bg-danger {
+    background: #dc3545;
+}
+
+.toast.bg-primary {
+    background: #0d6efd;
+}
+
+.toast .btn-close {
+    border: 0;
+    background: none;
+    color: inherit;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.toast .btn-close::before {
+    content: "×";
+}
+
+/* LOADER (shown by HTMX for every request: hx-indicator="#indicator" on <body>) */
+/* full-screen overlay: dims and blurs the page, spinner in the center */
+#indicator {
+    position: fixed;
+    inset: 0;
+    z-index: 5000;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(2px);
+    /* appears after 200ms, so fast requests don't flicker */
+    opacity: 0;
+    animation: indicator-show 0s 200ms forwards;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #0d6efd;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spinner-rotate 0.7s linear infinite;
+}
+
+@keyframes spinner-rotate {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes indicator-show {
+    to {
+        opacity: 1;
+    }
+}
+
 .htmx-indicator {
     display: none !important;
 }

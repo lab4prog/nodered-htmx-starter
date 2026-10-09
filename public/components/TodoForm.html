@@ -1,0 +1,10 @@
+{{! create: no msg.todo -> POST /todos, edit: msg.todo -> PUT /todos/:id }}
+<form {{#todo}}hx-put="/todos/{{id}}"{{/todo}}{{^todo}}hx-post="/todos"{{/todo}}
+    hx-target="#todo-list" hx-swap="outerHTML">
+    <h2>{{#todo}}Edit task{{/todo}}{{^todo}}New task{{/todo}}</h2>
+    <input name="title" value="{{todo.title}}" placeholder="Title" required autofocus>
+    <div class="actions">
+        <button type="button" data-modal-close>Cancel</button>
+        <button type="submit">Save</button>
+    </div>
+</form>

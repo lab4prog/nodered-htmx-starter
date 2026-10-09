@@ -1,273 +1,361 @@
 # Node-RED HTMX Starter
 
-A starter project for rapid web application development using Node-RED and HTMX with a component architecture.
-
-## 🚀 Concept
-
-**Node-RED HTMX Starter** is a low-code solution for creating interactive web applications without writing complex JavaScript. The project combines Node-RED visual programming, [HTMX](https://htmx.org/) and its own server-side component system built on Node-RED subflows.
+A starter project for building web applications with [Node-RED](https://nodered.org/) and [HTMX](https://htmx.org/): pages and components are plain HTML files, business logic lives in Node-RED flows, and one subflow, `View`, turns them into HTML responses.
 
 ### Key Benefits
 
-- **Low entry barrier** - build web applications visually
-- **Component architecture** - reusable HTML components with nesting (`<TodoItem/>`)
-- **Rapid development** - from idea to working application in minutes
-- **No complex JavaScript** - interactivity via HTMX attributes
-- **Built-in cache** - templates are cached in memory and invalidated automatically on file changes
-- **Toasts, modal and loader** out of the box
+- **Low entry barrier** - the logic is a visual flow, the UI is plain HTML with HTMX attributes
+- **Components** - reusable HTML files with nesting (`<TodoItem/>`) and slots (`<Card>...</Card>`)
+- **Real URLs** - every page has its own address; refresh, direct links and the back button work
+- **Partial updates** - an action or a filter refreshes only the blocks it changed (`hx-select`, `hx-swap-oob`)
+- **Built-in cache** - templates are cached in memory and reloaded automatically when files change
+- **Toasts, modal and loader** out of the box, no CSS framework required
 
 
-## 📦 Installation and Deployment
+## 📦 Quick Start
 
-### Step 1: Node-RED Projects Setup
+1. **Enable Node-RED projects** (recommended, not mandatory) in `settings.js`:
+   ```javascript
+   editorTheme: {
+       projects: {
+           enabled: true
+       }
+   }
+   ```
+2. **Move the editor away from `/`**, so the application can be served from the root:
+   ```javascript
+   httpAdminRoot: '/admin',
+   ```
+   All links in the templates are absolute (`/pages/...`, `/assets/...`), so `httpNodeRoot` must stay `/` (the default).
+3. Restart Node-RED, then **Projects → New → Clone repository**:
+   ```
+   https://github.com/lab4prog/nodered-htmx-starter.git
+   ```
+4. **Check the project path.** Files are read relative to the global environment variable `PROJECT_PATH` (menu → **Settings → Environment**):
+   ```
+   PROJECT_PATH = ./data/projects/nodered-htmx-starter
+   ```
+   It is resolved from the working directory of the Node-RED process. If your project lives elsewhere, change it and the path in the **watch** node of the *Bootstraping* group.
+5. Open `http://your-nodered-address/`.
 
-Using Node-RED projects is recommended (not mandatory).
 
-In your Node-RED `settings.js` enable project support:
+## 🧭 How It Works
 
-```javascript
-editorTheme: {
-    projects: {
-        enabled: true
-    }
-}
-```
-
-### Step 2: Creating a Project
-
-1. Restart Node-RED
-2. In the Node-RED main menu select **"Projects" → "New"**
-3. Choose **"Clone repository"**
-4. Specify the repository URL:
-```
-https://github.com/lab4prog/nodered-htmx-starter.git
-```
-5. Enter the project name and click **"Clone project"**
-
-### Step 3: Configure the project path
-
-All files are read from disk relative to the global environment variable **`PROJECT_PATH`** (Node-RED menu → **Settings → Environment**, global config):
-
-```
-PROJECT_PATH = ./data/projects/nodered-htmx-starter
-```
-
-The path is resolved relative to the working directory of the Node-RED process. Adjust it if your user directory or project name differs.
-
-Also update the path in the **watch** node of the *Bootstraping* group (`./data/projects/nodered-htmx-starter/public`) so cache invalidation keeps working.
-
-### Step 4: Running the Application
-
-After deploy, the application is available at the root of the Node-RED HTTP endpoints:
+Every endpoint is a short flow:
 
 ```
-http://your-nodered-address/
+HTTP IN → business logic (fills msg) → View subflow → HTTP Response
 ```
 
-If `httpNodeRoot` is set in `settings.js` (e.g. `/ui`), the address will be `http://your-nodered-address/ui`.
+- **Business logic** is ordinary Node-RED nodes: function, database, HTTP request... It puts data into `msg` (e.g. `msg.todos`) and optionally a toast (`msg.notification`).
+- **View** loads an HTML file, resolves the components inside it and renders the result with Mustache using `msg` as data.
+
+The same endpoint serves two kinds of requests. `View` decides by the `HX-Request` header:
+
+| Request | Response |
+|---|---|
+| HTMX (menu click, button, form) | only the rendered page or component |
+| Direct (address bar, refresh, shared link) | the layout `index.html` with the page placed into its `<slot/>` |
 
 
 ## 📁 Project Structure
 
 ```
 nodered-htmx-starter/
-├── flows.json               # Node-RED flows (Starter tab + Page/Component subflows)
-├── flows_cred.json          # Node-RED credentials
-├── package.json             # Node-RED project settings
+├── flows.json               # Starter tab (endpoints) + View subflow
+├── flows_cred.json
+├── package.json
 └── public/
-    ├── index.html           # Main layout (nav, #main, loader, toasts, modal, HTMX)
+    ├── index.html           # Layout: menu, <slot/> for pages, loader, toasts, modal, HTMX
     ├── assets/
-    │   ├── main.js          # Active menu, toast notifications, modal components
-    │   └── style.css        # Basic styles (incl. htmx-indicator)
-    ├── pages/               # Pages, loaded into #main
+    │   ├── main.js          # Active menu, toasts, modal
+    │   └── style.css        # Card, ToDo, modal, toasts, loader
+    ├── pages/               # Pages: name = file name (subfolders allowed)
     │   ├── home.html
     │   ├── todo.html
     │   └── contacts.html
-    └── components/          # Components (file name = component name)
-        ├── Todo.html
-        └── TodoItem.html
+    └── components/          # Components: <Name/> = Name.html
+        ├── Card.html        # Card with a <slot>
+        ├── Todo.html        # Task list (#todo-list)
+        ├── TodoFilter.html  # All / Active / Done (#todo-filter)
+        ├── TodoItem.html    # Task row: toggle, edit, delete
+        ├── TodoForm.html    # Create / edit form for the modal
+        └── TodoUpdate.html  # Response of the ToDo actions: list + counter (hx-swap-oob)
 ```
 
+### Starter tab
 
-## 🏗 Project Architecture
-
-All flows are on the **Starter** tab.
-
-### Bootstraping group
-
-| Endpoint / node | Purpose |
+| Group / endpoint | Purpose |
 |---|---|
-| `GET /` (`mainLayout`) | Returns `public/index.html` - the main layout of the application |
-| `GET /assets/:filename` | Serves static files from `public/assets` (css, js, png, jpg, jpeg, svg) |
-| `watch` + `inject` → `clearCache` | Clears the template cache when anything in `public` changes, or manually via the inject button |
-
-### Main layout `index.html`
-
-Contains:
-- navigation with HTMX links (`/pages/home` is loaded automatically on `load`);
-- the `<main id="main">` container for pages;
-- loader `#indicator` (class `htmx-indicator`);
-- toast container `#toastPlacement` and `success` / `error` / `info` toast templates;
-- modal `#Modal` with `#ModalContent`;
-- HTMX 2.0.7 from CDN and `/assets/main.js`.
-
-### Pages `/pages/<name>`
-
-Each page has its **own HTTP endpoint** that ends with the **`Page`** subflow:
-
-```
-HTTP IN (/pages/todo) → [Business Logic] → Subflow Page (page: "todo") → HTTP Response
-```
-
-The `Page` subflow loads `public/pages/<page>.html`, resolves nested components and renders the result with Mustache using `msg` as data.
-
-```html
-<nav>
-    <a href="#" hx-get="/pages/home" hx-trigger="load, click" hx-target="#main">Home</a>
-    <a href="#" hx-get="/pages/todo" hx-target="#main">ToDo</a>
-    <a href="#" hx-get="/pages/contacts" hx-target="#main">Contacts</a>
-</nav>
-<main id="main"></main>
-```
-
-**Adding a new page:**
-1. Create `public/pages/about.html`
-2. Add `HTTP IN` (`GET /pages/about`) → `Page` subflow (env `page` = `about`) → `HTTP Response`
-3. Add a link with `hx-get="/pages/about"` to the navigation
-
-### Components `/components/<name>`
-
-A component can be:
-- **embedded** in a page or another component with a tag (see below) - it is resolved on the server in the same request;
-- **loaded separately** via its own endpoint ending with the **`Component`** subflow:
-
-```
-HTTP IN (/components/todo) → Business Logic → Subflow Component (mainComponent: "Todo") → HTTP Response
-```
-
-```html
-<div id="todo" hx-get="/components/todo" hx-trigger="load"></div>
-```
+| *Bootstraping*: `GET /` | Home page (`View`: Page `home`) |
+| *Bootstraping*: `GET /assets/:filename` | Static files from `public/assets`. Only plain file names are served (`style.css`), anything else (`..%2F`, `.hidden`) → 404 |
+| *Bootstraping*: `watch` + `inject` → `clearCache` | Clears the template cache on any change in `public` (recursive) or by the inject button |
+| *Bootstraping*: `catch` → `errorResponse` | Errors in endpoint logic on this tab → `500 Server error` (see [Errors](#errors)) |
+| `GET /pages/home`, `/pages/todo`, `/pages/contacts` | Pages |
+| *ToDo* | CRUD example: create, edit, toggle, delete, filter - see [ToDo example](#-todo-example) |
 
 
-## 🧩 Component Tags - the magic of the Page / Component subflows
+## 🧱 The `View` Subflow
 
-Inside any page or component you can insert another component with a tag whose name **starts with a capital letter**:
+| Field | Default | Description |
+|---|---|---|
+| **Type** | `page` | select: **Page** (`public/pages`) or **Component** (`public/components`) |
+| `name` | `index` | file name without `.html`, subfolders allowed: `operations/transactions` (can also come from `msg.name`). Only letters, digits, `_`, `-` and `/` - no `..` |
+| `layout` | `index` | layout file in `public` used for direct requests |
+| `maxRecursion` | `10` | protection from infinite component nesting |
+
+What happens inside:
+
+1. Load the file - from the cache or from disk
+2. Direct (non-HTMX) request: load the layout and put the file into its `<slot/>`
+3. Find component tags (`<Name/>`), load `components/Name.html` for each one and put them in place - in the layout too, so it can use components like `<Navbar/>`
+4. Repeat step 3 for nested components (up to `maxRecursion` passes)
+5. Render everything once with **Mustache** using `msg` as data
+6. Add the `HX-Trigger` header for a toast if `msg.notification` is set
+
+### Errors
+
+A request never hangs on an error, it gets a `500`:
+
+| Where the error happens | Caught by | Response |
+|---|---|---|
+| inside `View` (missing page/component file, `maxRecursion` exceeded) | `catch` inside `View` | `500 Render error` |
+| in endpoint logic on the Starter tab (function, DB query, ...) | `catch` in the *Bootstraping* group | `500 Server error`, `404 Not found` for a missing file |
+
+Errors handled by `catch` are not logged by Node-RED, so both handlers write the error text to the log as a warning. The tab handler skips errors that are not part of an HTTP request (e.g. in `seedTodos`) and requests that were already answered.
+
+> The `HTTP Response` nodes must not have a fixed status code, otherwise it overrides `msg.statusCode`.
+
+**Cache.** Loaded files are kept in the global context variable `cache` (key - full path). The `watch` node clears it when anything in `public` changes, the `inject` button clears it manually.
+
+
+## 🧩 Templates
+
+### Components
+
+A tag whose name **starts with a capital letter** is a component:
 
 ```html
-<!-- public/components/Todo.html -->
-<ul>
+<!-- components/Todo.html -->
+<ul class="todo-list">
     <TodoItem/>
 </ul>
 ```
 
-Both forms are supported: `<TodoItem/>` and `<TodoItem>...</TodoItem>` (the content inside is ignored).
+- the tag name must match the file name exactly, including case: `<TodoItem/>` → `components/TodoItem.html` (on Linux file names are case-sensitive);
+- lowercase tags (`<div>`, `<ul>`, `<slot>` …) are ordinary HTML.
 
-### How it works
+### Slots
 
-1. The subflow loads the main file (page or component) - from the cache or from disk
-2. It finds all tags matching `<[A-Z]...>` and loads `public/components/<TagName>.html` for each one
-3. The tags are replaced with the file contents; the process repeats for nested components (up to `maxRecursion` levels)
-4. The final HTML is rendered with **Mustache** using `msg` as data and returned
-
-> ⚠️ The tag name must exactly match the file name, including case: `<TodoItem/>` → `components/TodoItem.html`. On Linux file names are case-sensitive.
->
-> Lowercase tags (`<div>`, `<ul>` …) are ordinary HTML and are not touched.
-
-### Subflow settings
-
-| Subflow | Env variable | Default | Description |
-|---|---|---|---|
-| `Page` | `page` | `index` | page file name in `public/pages` (can also be passed in `msg.page`) |
-| `Component` | `mainComponent` | `index` | component file name in `public/components` |
-| both | `maxRecursion` | `10` | protection from infinite component nesting |
-
-### Cache
-
-Loaded files are stored in the global context variable `cache` (key - full file path). The cache is cleared:
-- automatically by the `watch` node when files in `public` change;
-- manually with the `inject` button in the *Bootstraping* group.
-
-
-## 💼 Business Logic
-
-**Important:** all business logic is placed **between the HTTP IN endpoint and the `Page` / `Component` subflow**.
-
-```
-HTTP Request → Business Logic → msg with data → Subflow Page/Component → HTML Response
-```
-
-### Example: `todo` component
-
-1. **HTTP IN** `GET /components/todo`
-2. **Function** `todos`:
-```javascript
-msg.todos = [
-    { id: 1, title: "Buy milk", done: false },
-    { id: 2, title: "Do your homework", done: true }
-];
-return msg;
-```
-3. **Subflow Component** (`mainComponent: "Todo"`)
-4. **HTTP Response**
-
-### Mustache Templating
-
-The data from `msg` is substituted into the assembled template using [Mustache syntax](https://mustache.github.io/mustache.5.html):
+Like in Vue or Svelte, a component can declare a `<slot>`. The content between the component's tags goes there:
 
 ```html
-<!-- public/components/TodoItem.html -->
+<!-- components/Card.html -->
+<section class="card">
+    <slot>Nothing here yet</slot>
+</section>
+```
+
+| Usage | Result |
+|---|---|
+| `<Card><Todo/></Card>` | `<Todo/>` goes into the slot (and is resolved on the next pass) |
+| `<Card/>` or `<Card></Card>` | the fallback is used: `Nothing here yet` |
+| `<slot/>` without fallback | the slot is removed when no content is given |
+
+The layout works the same way: `index.html` has `<main id="main"><slot/></main>` and the page goes into that slot. Another layout (e.g. without the menu for a login page) is another file in `public` selected with the `layout` field.
+
+Limitations: one slot per component (no named slots yet); a component nested inside itself (`<Card><Card>...</Card></Card>`) is not supported.
+
+### Data: Mustache
+
+`msg` is the data for [Mustache](https://mustache.github.io/mustache.5.html). Values are HTML-escaped (`{{title}}`), so user input is safe to output:
+
+```html
+<!-- components/TodoItem.html -->
 {{# todos}}
 <li class="todo-item {{#done}}completed{{/done}}">
-    <input type="checkbox" {{#done}}checked{{/done}}>
-    <span>{{title}}</span>
+    <span class="title">{{title}}</span>
 </li>
 {{/ todos}}
 ```
 
+Use `{{! comment }}` for comments that should not reach the browser.
 
-## 🔔 UI Helpers (`main.js`)
 
-### Toast notifications
+## 📄 Pages and Navigation
 
-Set `msg.notification` in the business logic before the `Page` or `Component` subflow:
+**Adding a page:**
+1. Create `public/pages/about.html`
+2. Add `HTTP IN` (`GET /pages/about`) → [business logic] → `View` (Page, `about`) → `HTTP Response`
+3. Add a link to the menu in `index.html`:
+   ```html
+   <a href="/pages/about" hx-get="/pages/about" hx-target="#main" hx-push-url="true">About</a>
+   ```
+
+`hx-push-url` puts the page address into the address bar, `href` keeps the link working without JavaScript. The menu link matching the current URL is highlighted automatically.
+
+`index.html` sets `historyRestoreAsHxRequest: false` in `htmx-config`: when HTMX restores history from the server (back button with an empty history cache), it requests the full page instead of a fragment.
+
+
+## 🔄 Updating Part of a Page
+
+There are three tools, and the ToDo page uses all of them.
+
+### 1. An action returns the block it changed
+
+The endpoint renders only a component (`View` with type **Component**), and HTMX replaces that block:
+
+```html
+<form hx-post="/todos" hx-target="#todo-list" hx-swap="outerHTML">...</form>
+```
+```
+HTTP IN (POST /todos) → createTodo → View (Component, Todo) → HTTP Response
+```
+
+Use it for actions: create, update, delete.
+
+### 2. `hx-select` takes the block from the page
+
+For filters and pagination you don't need a separate endpoint: request **the page** with new parameters and let HTMX take only the needed block from the response:
+
+```html
+<div id="todo-filter" hx-target="#todo-list" hx-select="#todo-list" hx-select-oob="#todo-filter"
+     hx-swap="outerHTML" hx-push-url="true">
+    <a href="/pages/todo?filter=active" hx-get="/pages/todo?filter=active">Active</a>
+    ...
+</div>
+```
+
+- the page endpoint reads the parameters from `msg.req.query` and renders the page;
+- `hx-select="#todo-list"` takes the list from the response, `hx-target` + `hx-swap="outerHTML"` replace it;
+- `hx-select-oob="#todo-filter"` takes **one more block** from the same response and swaps it by `id` - here the filter itself, to move the highlight to the clicked link. Several ids can be listed: `hx-select-oob="#a, #b"`;
+- `hx-push-url="true"` puts the parameters into the address bar (`/pages/todo?filter=active`) - such a link can be shared or refreshed with F5, and the same endpoint returns the full page with the filter applied;
+- `hx-*` attributes are inherited, so they are set once on the parent element.
+
+The same pattern works for a table with filters and pagination: one page endpoint, the filter form and the pagination links with `hx-select="#table-id"`.
+
+> The server renders the whole page on every request. That is cheap for templates, but heavy queries that the page needs only for other blocks (e.g. filter options from the DB) run every time too.
+
+### 3. `hx-swap-oob`: the server updates one more block
+
+When an action changes something outside the target block (a counter in the title, a badge in the menu), the response can carry that block with `hx-swap-oob`. HTMX swaps it by `id`, wherever it is on the page:
+
+```html
+<!-- components/TodoUpdate.html - response of the ToDo actions -->
+<Todo/>
+<small id="todo-count" hx-swap-oob="innerHTML">{{activeCount}} active</small>
+```
+
+```html
+<!-- pages/todo.html -->
+<h1>ToDo <small id="todo-count" class="todo-count">{{activeCount}} active</small></h1>
+```
+
+`<Todo/>` goes into `hx-target` as usual, the counter replaces the content of `#todo-count` in the title. `innerHTML` keeps the element itself (and its `class`) from the page.
+
+> Put `hx-swap-oob` only into **action responses**, not into page templates: a page loaded through the menu is an HTMX response too, and HTMX would cut such an element out of the page.
+
+| Tool | Who decides what to update | Use for |
+|---|---|---|
+| `hx-target` + component response | the element that sends the request | an action that changes one block |
+| `hx-select` / `hx-select-oob` | the element, picking blocks from the page response | filters, pagination, tabs |
+| `hx-swap-oob` | the server | an action that also changes blocks elsewhere |
+
+
+## ✅ ToDo Example
+
+A small CRUD in the *ToDo* group. Tasks live in the global context variable `todos` (in memory: an `inject` on start adds two tasks, everything is reset when Node-RED restarts).
+
+| Endpoint | Function | Response | Toast |
+|---|---|---|---|
+| `GET /pages/todo?filter=` | `todos` | page `todo` | - |
+| `GET /todos/:id/edit` | `editTodo` | component `TodoForm` (into the modal) | Task not found |
+| `POST /todos` | `createTodo` | component `TodoUpdate` | Task created / Title is required |
+| `PUT /todos/:id` | `updateTodo` | component `TodoUpdate` | Task updated |
+| `PATCH /todos/:id/toggle` | `toggleTodo` | component `TodoUpdate` | Task completed / reopened |
+| `DELETE /todos/:id` | `deleteTodo` | component `TodoUpdate` | Task deleted |
+
+The four actions only change the data and set the toast. They are all wired into **one shared tail** - several wires can go into one node, and one `HTTP Response` serves them all because every `msg` carries its own `msg.res`:
+
+```
+createTodo ─┐
+updateTodo ─┤
+toggleTodo ─┼─► link call filterTodos ─► View (Component, TodoUpdate) ─► HTTP Response
+deleteTodo ─┘
+```
+
+Components of the page:
+
+| Component | Content |
+|---|---|
+| `TodoFilter` (`#todo-filter`) | links **All / Active / Done** - [tool 2](#2-hx-select-takes-the-block-from-the-page) |
+| `Todo` (`#todo-list`) | the list, `TodoItem` per task |
+| `TodoItem` | checkbox (toggle), Edit (modal), Delete |
+| `TodoForm` | one form for create and edit: without `msg.todo` it sends `POST /todos`, with `msg.todo` - `PUT /todos/:id` |
+| `TodoUpdate` | response of the actions: `Todo` + the counter with `hx-swap-oob` - [tool 3](#3-hx-swap-oob-the-server-updates-one-more-block) |
+
+`filterTodos` is a subroutine (`link in` → function → `link out` in return mode) called with **link call** from the shared tail and from the page endpoint. It counts active tasks (`msg.activeCount`) and filters the list. A page request takes the filter from its own URL (`?filter=done`), an action takes it from the page it was sent from (the `HX-Current-URL` header HTMX sends with every request). So completing a task on the *Active* tab removes it from the list.
 
 ```javascript
-msg.notification = { message: "Task saved", type: "success" }; // success | error | info
+// createTodo
+const todos = global.get("todos") || [];
+const title = String(msg.payload.title || "").trim();
+
+if (!title) {
+    msg.notification = { message: "Title is required", type: "error" };
+} else {
+    const id = todos.reduce((max, t) => Math.max(max, t.id), 0) + 1;
+    todos.push({ id, title, done: false });
+    global.set("todos", todos);
+    msg.notification = { message: "Task created", type: "success" };
+}
+
+msg.todos = todos;
 return msg;
 ```
 
-The subflow adds an `HX-Trigger: showToast` response header, and `main.js` shows a toast from the matching template in `index.html` for 3 seconds.
 
-### Modal components
+## 🔔 UI Helpers (`main.js` + `style.css`)
 
-A button with the `data-modal-component` attribute copies the contents of the element with that `id` (usually a `<template>`) into `#ModalContent` and processes it with HTMX:
+`index.html` keeps Bootstrap-like class names for the toast templates, but no CSS framework is loaded - everything is styled in `style.css`.
 
-```html
-<button data-modal-component="edit-form">Edit</button>
+### Toasts
 
-<template id="edit-form">
-    <form hx-post="/components/todo">...</form>
-</template>
+Set `msg.notification` before `View`:
+
+```javascript
+msg.notification = { message: "Task saved", type: "success" }; // success | error | info
 ```
+
+`View` adds the `HX-Trigger: showToast` header, `main.js` shows the toast for 3 seconds (it can be closed with ×).
+
+### Modal
+
+`#Modal` opens:
+- by a button with `data-modal-component="<id>"` - the contents of the element with that `id` (usually a `<template>`) are copied into `#ModalContent`:
+  ```html
+  <button data-modal-component="todo-create">+ New task</button>
+  <template id="todo-create"><TodoForm/></template>
+  ```
+- after any HTMX request with `hx-target="#ModalContent"`:
+  ```html
+  <button hx-get="/todos/1/edit" hx-target="#ModalContent">Edit</button>
+  ```
+
+It closes after a successful HTMX request sent from inside the modal (e.g. form submit), by a `[data-modal-close]` button, a click on the backdrop or `Escape`.
 
 ### Loader
 
-Element `#indicator` with class `htmx-indicator` is shown while an HTMX request is in progress (see `style.css`). Point to it with `hx-indicator="#indicator"`.
+During every HTMX request a full-screen overlay `#indicator` dims and blurs the page and shows a spinner in the center (`<body hx-indicator="#indicator">` is inherited by all elements). It appears after 200 ms, so fast requests don't flicker. To check it, enable network throttling in the browser DevTools.
 
 ### Active menu
 
-Clicking `.navbar-nav .nav-link` moves the `active` class to the parent `.nav-item`.
+The `nav` link whose `href` matches the current URL gets the `active` class and `aria-current="page"` - on page load, after HTMX navigation and when going back in history.
 
 
 ## 📚 Useful Links
 
-- [HTMX Documentation](https://htmx.org/docs/) - complete HTMX documentation
-- [HTMX examples](https://htmx.org/examples/) - practical usage examples
-- [Mustache Documentation](https://mustache.github.io/mustache.5.html) - template syntax
-- [Node-RED Projects](https://nodered.org/docs/user-guide/projects/) - working with projects in Node-RED
-
-***
-
-**Created with ❤️**
-
-This starter lets you build modern web applications without deep knowledge of frontend frameworks, using the power of visual programming and component architecture.
+- [HTMX Documentation](https://htmx.org/docs/) and [examples](https://htmx.org/examples/)
+- [`hx-select`](https://htmx.org/attributes/hx-select/), [`hx-select-oob`](https://htmx.org/attributes/hx-select-oob/), [`hx-swap-oob`](https://htmx.org/attributes/hx-swap-oob/), [`hx-push-url`](https://htmx.org/attributes/hx-push-url/)
+- [Mustache syntax](https://mustache.github.io/mustache.5.html)
+- [Node-RED Projects](https://nodered.org/docs/user-guide/projects/)

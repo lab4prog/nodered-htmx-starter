@@ -1,6 +1,10 @@
 {{# todos}}
 <li class="todo-item {{#done}}completed{{/done}}">
-    <input type="checkbox" {{#done}}checked{{/done}}>
-    <span>{{title}}</span>
+    <input type="checkbox" {{#done}}checked{{/done}}
+        hx-patch="/todos/{{id}}/toggle" hx-target="#todo-list" hx-swap="outerHTML">
+    <span class="title">{{title}}</span>
+    <button type="button" hx-get="/todos/{{id}}/edit" hx-target="#ModalContent">Edit</button>
+    <button type="button" hx-delete="/todos/{{id}}" hx-target="#todo-list" hx-swap="outerHTML"
+        hx-confirm="Delete this task?">Delete</button>
 </li>
 {{/ todos}}

@@ -1,0 +1,3 @@
+{{! response of the ToDo actions: the list for hx-target + the counter in the page title, swapped by id (hx-swap-oob) }}
+<Todo/>
+<small id="todo-count" hx-swap-oob="innerHTML">{{activeCount}} active</small>
