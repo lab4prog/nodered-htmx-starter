@@ -269,7 +269,7 @@
         "rules": [
             {
                 "t": "regex",
-                "v": "<([A-Z][A-Za-z0-9_-]*)\\s*(?:\\/>|>[\\s\\S]*?<\\/\\1>)",
+                "v": "<([A-Z][A-Za-z0-9_-]*)(?:\\s+[A-Za-z_][\\w.-]*(?:=\"[^\"]*\")?)*\\s*(?:\\/>|>[\\s\\S]*?<\\/\\1>)",
                 "vt": "str",
                 "case": false
             },
@@ -296,7 +296,7 @@
         "type": "function",
         "z": "8ebee3b55772fac1",
         "name": "findComponents",
-        "func": "msg.iterationCount = (msg.iterationCount || 0) + 1;\nconst maxRecursion = env.get(\"maxRecursion\") || 10;\n\nif (msg.iterationCount > maxRecursion) {\n  node.error(\"Recursion limit exceeded\", msg);\n  return null;\n}\n\nconst mainTemplate = msg.payload;\nconst regex = /<([A-Z][A-Za-z0-9_-]*)\\s*(?:\\/>|>[\\s\\S]*?<\\/\\1>)/g;\nconst matches = [...mainTemplate.matchAll(regex)];\n\nlet foundTags = [];\n\nif (matches.length > 0) {\n  foundTags = [...new Set(matches.map(match => match[1]))];\n}\n\nmsg.payload = foundTags;\nmsg.mainTemplate = mainTemplate;\n\nreturn msg;",
+        "func": "msg.iterationCount = (msg.iterationCount || 0) + 1;\nconst maxRecursion = env.get(\"maxRecursion\") || 10;\n\nif (msg.iterationCount > maxRecursion) {\n  node.error(\"Recursion limit exceeded\", msg);\n  return null;\n}\n\nconst mainTemplate = msg.payload;\nconst regex = /<([A-Z][A-Za-z0-9_-]*)(?:\\s+[A-Za-z_][\\w.-]*(?:=\"[^\"]*\")?)*\\s*(?:\\/>|>[\\s\\S]*?<\\/\\1>)/g;\nconst matches = [...mainTemplate.matchAll(regex)];\n\nlet foundTags = [];\n\nif (matches.length > 0) {\n  foundTags = [...new Set(matches.map(match => match[1]))];\n}\n\nmsg.payload = foundTags;\nmsg.mainTemplate = mainTemplate;\n\nreturn msg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -365,7 +365,7 @@
         "type": "function",
         "z": "8ebee3b55772fac1",
         "name": "replace <component>",
-        "func": "const html = msg.mainTemplate;\nconst components = msg.payload;\nconst regex = /<([A-Z][A-Za-z0-9_-]*)\\s*(?:\\/>|>([\\s\\S]*?)<\\/\\1>)/g;\nconst slot = /<slot\\s*\\/>|<slot>([\\s\\S]*?)<\\/slot>/g;\n\nmsg.payload = html.replace(regex, (match, name, inner) => {\n  const component = components[name];\n  if (!component) return match;\n  // content between the tags goes into <slot>, otherwise the slot's fallback is used\n  return component.replace(slot, (s, fallback) => (inner && inner.trim()) ? inner : (fallback || \"\"));\n});\n\nreturn msg;",
+        "func": "const html = msg.mainTemplate;\nconst components = msg.payload;\nconst TAG = /<([A-Z][A-Za-z0-9_-]*)((?:\\s+[A-Za-z_][\\w.-]*(?:=\"[^\"]*\")?)*)\\s*(?:\\/>|>([\\s\\S]*?)<\\/\\1>)/g;\nconst ATTR = /([A-Za-z_][\\w.-]*)(?:=\"([^\"]*)\")?/g;\nconst SLOT = /<slot\\s*\\/>|<slot>([\\s\\S]*?)<\\/slot>/g;\n\nmsg._props = msg._props || {};\n\nmsg.payload = html.replace(TAG, (match, name, attrs, inner) => {\n  let component = components[name];\n  if (!component) return match;\n\n  // content between the tags goes into <slot>, otherwise the slot's fallback is used\n  component = component.replace(SLOT, (s, fallback) => (inner && inner.trim()) ? inner : (fallback || \"\"));\n\n  // props: data=\"path\" renders the component with msg.path as context (an array repeats it),\n  // other attributes are static props: <Card title=\"Tasks\"> -> {{title}} inside Card.html\n  const props = {};\n  let data = null;\n  for (const [, key, value] of (attrs || \"\").matchAll(ATTR)) {\n    if (key === \"data\") data = value;\n    else props[key] = value === undefined ? true : value;\n  }\n  if (data) {\n    if (!/^[A-Za-z_][\\w.]*$/.test(data)) throw new Error(`Invalid data=\"${data}\" in <${name}>`);\n    component = `{{#${data}}}${component}{{/${data}}}`;\n  }\n  if (Object.keys(props).length) {\n    // the final Mustache render looks values up: data item -> props -> msg\n    const id = \"p\" + (Object.keys(msg._props).length + 1);\n    msg._props[id] = props;\n    component = `{{#_props.${id}}}${component}{{/_props.${id}}}`;\n  }\n  return component;\n});\n\nreturn msg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,

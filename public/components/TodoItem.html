@@ -1,4 +1,4 @@
-{{# todos}}
+{{! one task; rendered for each item of data="todos" in Todo.html }}
 <li class="todo-item {{#done}}completed{{/done}}">
     <input type="checkbox" {{#done}}checked{{/done}}
         hx-patch="/todos/{{id}}/toggle" hx-target="#todo-list" hx-swap="outerHTML">
@@ -7,4 +7,3 @@
     <button type="button" hx-delete="/todos/{{id}}" hx-target="#todo-list" hx-swap="outerHTML"
         hx-confirm="Delete this task?">Delete</button>
 </li>
-{{/ todos}}

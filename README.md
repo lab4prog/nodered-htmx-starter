@@ -5,7 +5,7 @@ A starter project for building web applications with [Node-RED](https://nodered.
 ### Key Benefits
 
 - **Low entry barrier** - the logic is a visual flow, the UI is plain HTML with HTMX attributes
-- **Components** - reusable HTML files with nesting (`<TodoItem/>`) and slots (`<Card>...</Card>`)
+- **Components** - reusable HTML files with nesting (`<TodoItem/>`), props (`<Card title="Tasks">`, `<TodoItem data="todos"/>`) and slots (`<Card>...</Card>`)
 - **Real URLs** - every page has its own address; refresh, direct links and the back button work
 - **Partial updates** - an action or a filter refreshes only the blocks it changed (`hx-select`, `hx-swap-oob`)
 - **Form validation** - a `Validate` subflow with JSON rules, errors are shown next to the fields
@@ -76,10 +76,10 @@ nodered-htmx-starter/
     │   ├── todo.html
     │   └── contacts.html
     └── components/          # Components: <Name/> = Name.html
-        ├── Card.html        # Card with a <slot>
+        ├── Card.html        # Card: title prop + <slot>
         ├── Todo.html        # Task list (#todo-list)
         ├── TodoFilter.html  # All / Active / Done (#todo-filter)
-        ├── TodoItem.html    # Task row: toggle, edit, delete
+        ├── TodoItem.html    # One task (data="todos"): toggle, edit, delete
         ├── TodoForm.html    # Create / edit form for the modal
         └── TodoUpdate.html  # Response of the ToDo actions: list + counter (hx-swap-oob)
 ```
@@ -109,7 +109,7 @@ What happens inside:
 
 1. Load the file - from the cache or from disk
 2. Direct (non-HTMX) request: load the layout and put the file into its `<slot/>`
-3. Find component tags (`<Name/>`), load `components/Name.html` for each one and put them in place - in the layout too, so it can use components like `<Navbar/>`
+3. Find component tags (`<Name/>`), load `components/Name.html` for each one and put them in place with their props and slot content - in the layout too, so it can use components like `<Navbar/>`
 4. Repeat step 3 for nested components (up to `maxRecursion` passes)
 5. Render everything once with **Mustache** using `msg` as data
 6. Add the `HX-Trigger` header for a toast if `msg.notification` is set
@@ -138,24 +138,66 @@ A tag whose name **starts with a capital letter** is a component:
 
 ```html
 <!-- components/Todo.html -->
-<ul class="todo-list">
-    <TodoItem/>
+<ul id="todo-list" class="todo-list">
+    <TodoItem data="todos"/>
 </ul>
 ```
 
 - the tag name must match the file name exactly, including case: `<TodoItem/>` → `components/TodoItem.html` (on Linux file names are case-sensitive);
 - lowercase tags (`<div>`, `<ul>`, `<slot>` …) are ordinary HTML.
 
-### Slots
+### Props
 
-Like in Vue or Svelte, a component can declare a `<slot>`. The content between the component's tags goes there:
+Attributes of a component tag are its **props**:
 
+| Attribute | Meaning | Inside the component |
+|---|---|---|
+| `title="Tasks"` | a static string | `{{title}}`, `{{#title}}...{{/title}}` |
+| `compact` (no value) | `true` | `{{#compact}}...{{/compact}}` |
+| `data="todos"` | the context: `msg.todos` (any path, e.g. `user.address`) | the fields of that object: `{{id}}`, `{{title}}` |
+
+`data` works like a Mustache section: an **object** renders the component once with that object, an **array** renders it for every item, an empty value or empty array renders nothing:
+
+```html
+<!-- components/Todo.html -->
+<TodoItem data="todos"/>
+```
+```html
+<!-- components/TodoItem.html - one task, no loop inside -->
+<li class="todo-item {{#done}}completed{{/done}}">
+    <span class="title">{{title}}</span>
+</li>
+```
+
+Static props:
+
+```html
+<!-- pages/todo.html -->
+<Card title="Tasks">
+    <Todo/>
+</Card>
+```
 ```html
 <!-- components/Card.html -->
 <section class="card">
+    {{#title}}<h2 class="card-title">{{title}}</h2>{{/title}}
     <slot>Nothing here yet</slot>
 </section>
 ```
+
+The same component can be used several times with different props on one page.
+
+**Lookup order.** A value is looked up in the `data` item first, then in the props, then in `msg` - so a component still sees the rest of the page data (`{{activeCount}}`, `{{filter.all}}`).
+
+> Values are plain strings - `title="{{user.name}}"` is **not** evaluated. Use `data="user"` and `{{name}}` inside the component for dynamic values.
+>
+> Slot content sits inside the component, so it sees the component's props too: if the component has a `title` prop, `{{title}}` in the slot content shows the prop.
+
+How it is done: `View` wraps the inserted component in Mustache sections - `{{#_props.p1}}{{#todos}}...{{/todos}}{{/_props.p1}}`, with the static props stored in `msg._props` - and the single Mustache render does the rest.
+
+### Slots
+
+Like in Vue or Svelte, a component can declare a `<slot>`. The content between the component's tags goes there:
 
 | Usage | Result |
 |---|---|
@@ -169,15 +211,14 @@ Limitations: one slot per component (no named slots yet); a component nested ins
 
 ### Data: Mustache
 
-`msg` is the data for [Mustache](https://mustache.github.io/mustache.5.html). Values are HTML-escaped (`{{title}}`), so user input is safe to output:
+`msg` is the data for [Mustache](https://mustache.github.io/mustache.5.html). Values are HTML-escaped (`{{title}}`), so user input is safe to output. `{{#list}}...{{/list}}` repeats for arrays and shows for truthy values, `{{^list}}...{{/list}}` shows for empty / false values:
 
 ```html
-<!-- components/TodoItem.html -->
-{{# todos}}
-<li class="todo-item {{#done}}completed{{/done}}">
-    <span class="title">{{title}}</span>
-</li>
-{{/ todos}}
+<!-- components/Todo.html -->
+<ul id="todo-list" class="todo-list">
+    <TodoItem data="todos"/>
+    {{^todos}}<li class="empty">No tasks</li>{{/todos}}
+</ul>
 ```
 
 Use `{{! comment }}` for comments that should not reach the browser.
@@ -290,7 +331,7 @@ Components of the page:
 | Component | Content |
 |---|---|
 | `TodoFilter` (`#todo-filter`) | links **All / Active / Done** - [tool 2](#2-hx-select-takes-the-block-from-the-page) |
-| `Todo` (`#todo-list`) | the list, `TodoItem` per task |
+| `Todo` (`#todo-list`) | the list: `<TodoItem data="todos"/>` renders one `TodoItem` per task |
 | `TodoItem` | checkbox (toggle), Edit (modal), Delete |
 | `TodoForm` | one form for create and edit: without `msg.form.id` it sends `POST /todos`, with it - `PUT /todos/:id`; shows `msg.errors` |
 | `TodoUpdate` | response of the actions: `Todo` + the counter with `hx-swap-oob` - [tool 3](#3-hx-swap-oob-the-server-updates-one-more-block) |
