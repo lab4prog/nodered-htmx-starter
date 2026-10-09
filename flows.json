@@ -16,7 +16,7 @@
         "in": [
             {
                 "x": 40,
-                "y": 260,
+                "y": 180,
                 "wires": [
                     {
                         "id": "418ed979dd3fd9ea"
@@ -27,7 +27,7 @@
         "out": [
             {
                 "x": 1240,
-                "y": 360,
+                "y": 280,
                 "wires": [
                     {
                         "id": "671e153bc3107940",
@@ -178,16 +178,17 @@
             "c43a8ccfca68adba",
             "e7e57dd41d47bd92",
             "81c6b1c2920f88c3",
-            "77f53a25bd2d315c",
-            "2ec2bf1787328180",
-            "073ad41ba89962a9",
             "3bad2aa489f5f9b1",
-            "33deb625a5239dfc"
+            "33deb625a5239dfc",
+            "946ebc0fc1884263",
+            "89b7ecbf89beb889",
+            "6a21a2bd24efc6b6",
+            "cd9e3a0a3696b39c"
         ],
         "x": 34,
         "y": 39,
         "w": 1192,
-        "h": 304
+        "h": 322
     },
     {
         "id": "eea2ca176b38c47f",
@@ -220,13 +221,25 @@
             "bc04261a42408b58",
             "1451e9a3ff81c31b",
             "eea3db9e5253529e",
-            "8f50d4f64551b002",
-            "f73a61bbc3263fa7"
+            "eb75e58533fcec85"
         ],
         "x": 34,
-        "y": 679,
-        "w": 1292,
-        "h": 582
+        "y": 599,
+        "w": 1262,
+        "h": 522
+    },
+    {
+        "id": "eb75e58533fcec85",
+        "type": "junction",
+        "z": "5ccba3331b3862fe",
+        "g": "eea2ca176b38c47f",
+        "x": 760,
+        "y": 940,
+        "wires": [
+            [
+                "50762f6746beb41c"
+            ]
+        ]
     },
     {
         "id": "028f3987925e940f",
@@ -252,7 +265,7 @@
         "finalize": "",
         "libs": [],
         "x": 150,
-        "y": 260,
+        "y": 180,
         "wires": [
             [
                 "cf862678c74a9499"
@@ -281,7 +294,7 @@
         "repair": false,
         "outputs": 2,
         "x": 780,
-        "y": 260,
+        "y": 180,
         "wires": [
             [
                 "c38c06503ef1b2b6"
@@ -304,7 +317,7 @@
         "finalize": "",
         "libs": [],
         "x": 940,
-        "y": 120,
+        "y": 40,
         "wires": [
             [
                 "ac1e4ab62b4af5b9"
@@ -324,7 +337,7 @@
         "finalize": "",
         "libs": [],
         "x": 1260,
-        "y": 120,
+        "y": 40,
         "wires": [
             [
                 "d5fb32f7a8854e81"
@@ -353,7 +366,7 @@
         "reduceInitType": "",
         "reduceFixup": "",
         "x": 300,
-        "y": 120,
+        "y": 40,
         "wires": [
             [
                 "4897a4bdeb3aa1d7"
@@ -373,7 +386,7 @@
         "finalize": "",
         "libs": [],
         "x": 520,
-        "y": 120,
+        "y": 40,
         "wires": [
             [
                 "01e1f44ba7c4217e"
@@ -393,7 +406,7 @@
         "finalize": "",
         "libs": [],
         "x": 920,
-        "y": 360,
+        "y": 280,
         "wires": [
             [
                 "671e153bc3107940"
@@ -412,7 +425,7 @@
         "template": "",
         "output": "str",
         "x": 1110,
-        "y": 360,
+        "y": 280,
         "wires": [
             []
         ]
@@ -430,7 +443,7 @@
         "addname": "",
         "property": "payload",
         "x": 1110,
-        "y": 120,
+        "y": 40,
         "wires": [
             [
                 "371b3fcaa228d034"
@@ -458,7 +471,7 @@
         "repair": false,
         "outputs": 2,
         "x": 500,
-        "y": 260,
+        "y": 180,
         "wires": [
             [
                 "01e1f44ba7c4217e"
@@ -481,7 +494,7 @@
         "finalize": "",
         "libs": [],
         "x": 150,
-        "y": 360,
+        "y": 280,
         "wires": [
             [
                 "66ada11c39f5d12f"
@@ -501,7 +514,7 @@
         "finalize": "",
         "libs": [],
         "x": 530,
-        "y": 360,
+        "y": 280,
         "wires": [
             [
                 "01e1f44ba7c4217e"
@@ -521,7 +534,7 @@
         "finalize": "",
         "libs": [],
         "x": 170,
-        "y": 500,
+        "y": 420,
         "wires": [
             [
                 "a37f3b2ac682cb2d"
@@ -547,7 +560,7 @@
         "repair": false,
         "outputs": 2,
         "x": 330,
-        "y": 500,
+        "y": 420,
         "wires": [
             [
                 "b6f2d00d4ed282f6"
@@ -569,7 +582,7 @@
         "encoding": "none",
         "allProps": false,
         "x": 490,
-        "y": 460,
+        "y": 380,
         "wires": [
             [
                 "5f4575a2ac7fdeed"
@@ -589,7 +602,7 @@
         "finalize": "",
         "libs": [],
         "x": 660,
-        "y": 460,
+        "y": 380,
         "wires": [
             [
                 "769d021b00a3dfac"
@@ -607,7 +620,7 @@
         "linkType": "static",
         "timeout": "30",
         "x": 320,
-        "y": 360,
+        "y": 280,
         "wires": [
             [
                 "2e2f9f80b8974c8e"
@@ -625,7 +638,7 @@
         "linkType": "static",
         "timeout": "30",
         "x": 120,
-        "y": 120,
+        "y": 40,
         "wires": [
             [
                 "eb8e54960581b986"
@@ -639,7 +652,7 @@
         "name": "loadFile",
         "links": [],
         "x": 35,
-        "y": 500,
+        "y": 420,
         "wires": [
             [
                 "aff5e350dceae9a0"
@@ -654,7 +667,7 @@
         "mode": "return",
         "links": [],
         "x": 815,
-        "y": 500,
+        "y": 420,
         "wires": []
     },
     {
@@ -668,7 +681,7 @@
         "linkType": "static",
         "timeout": "30",
         "x": 320,
-        "y": 260,
+        "y": 180,
         "wires": [
             [
                 "6d4a420b7f8e064f"
@@ -683,7 +696,7 @@
         "scope": null,
         "uncaught": false,
         "x": 940,
-        "y": 500,
+        "y": 420,
         "wires": [
             [
                 "97b064d1513bc8e6"
@@ -703,7 +716,7 @@
         "finalize": "",
         "libs": [],
         "x": 1110,
-        "y": 500,
+        "y": 420,
         "wires": [
             []
         ]
@@ -761,7 +774,7 @@
         "name": "Bootstraping",
         "info": "",
         "x": 1130,
-        "y": 260,
+        "y": 320,
         "wires": []
     },
     {
@@ -777,8 +790,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 490,
-        "y": 260,
+        "x": 330,
+        "y": 320,
         "wires": [
             []
         ]
@@ -796,7 +809,7 @@
         "onceDelay": 0.1,
         "topic": "",
         "x": 150,
-        "y": 260,
+        "y": 320,
         "wires": [
             [
                 "39b97c0ed1067938"
@@ -808,11 +821,11 @@
         "type": "watch",
         "z": "5ccba3331b3862fe",
         "g": "cf522e74c2f1fece",
-        "name": "",
-        "files": "./data/projects/nodered-htmx-starter/public",
+        "name": "project files",
+        "files": "${PROJECT_PATH}",
         "recursive": true,
-        "x": 260,
-        "y": 200,
+        "x": 150,
+        "y": 260,
         "wires": [
             [
                 "39b97c0ed1067938"
@@ -831,7 +844,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 130,
-        "y": 80,
+        "y": 140,
         "wires": [
             [
                 "81c6b1c2920f88c3"
@@ -852,7 +865,7 @@
             }
         ],
         "x": 440,
-        "y": 80,
+        "y": 140,
         "wires": [
             [
                 "e7e57dd41d47bd92"
@@ -867,8 +880,8 @@
         "name": "",
         "statusCode": "",
         "headers": {},
-        "x": 1140,
-        "y": 80,
+        "x": 1150,
+        "y": 140,
         "wires": []
     },
     {
@@ -894,7 +907,7 @@
         "repair": false,
         "outputs": 2,
         "x": 280,
-        "y": 140,
+        "y": 200,
         "wires": [
             [
                 "func_static"
@@ -932,7 +945,7 @@
         "to": "",
         "reg": false,
         "x": 890,
-        "y": 140,
+        "y": 200,
         "wires": [
             [
                 "http_resp_static"
@@ -945,7 +958,7 @@
         "z": "5ccba3331b3862fe",
         "g": "cf522e74c2f1fece",
         "name": "resolve file",
-        "func": "let file = msg.req.params.filename;\nconst projectPath = env.get(\"PROJECT_PATH\");\nmsg.filename = `${projectPath}/public/assets/${file}`;\n\nlet ext = file.split('.').pop().toLowerCase();\nlet mime = {\n    css: \"text/css\",\n    js: \"application/javascript\",\n    png: \"image/png\",\n    jpg: \"image/jpeg\",\n    jpeg: \"image/jpeg\",\n    svg: \"image/svg+xml\"\n};\nmsg.headers = {\"Content-Type\": mime[ext] || \"application/octet-stream\"};\n\nreturn msg;",
+        "func": "let file = msg.req.params.filename;\nconst projectPath = env.get(\"PROJECT_PATH\");\nmsg.filename = `${projectPath}/public/assets/${file}`;\n\nlet ext = file.split('.').pop().toLowerCase();\nlet mime = {\n    css: \"text/css\",\n    js: \"application/javascript\",\n    json: \"application/json\",\n    map: \"application/json\",\n    txt: \"text/plain\",\n    png: \"image/png\",\n    jpg: \"image/jpeg\",\n    jpeg: \"image/jpeg\",\n    gif: \"image/gif\",\n    webp: \"image/webp\",\n    svg: \"image/svg+xml\",\n    ico: \"image/x-icon\",\n    woff: \"font/woff\",\n    woff2: \"font/woff2\",\n    ttf: \"font/ttf\"\n};\nmsg.headers = {\n    \"Content-Type\": mime[ext] || \"application/octet-stream\",\n    // the browser keeps the file but asks the server every time: unchanged -> 304 (ETag), changed -> new file\n    \"Cache-Control\": \"no-cache\"\n};\n\nreturn msg;",
         "outputs": 1,
         "timeout": "",
         "noerr": 0,
@@ -953,7 +966,7 @@
         "finalize": "",
         "libs": [],
         "x": 490,
-        "y": 120,
+        "y": 180,
         "wires": [
             [
                 "file_in_static"
@@ -973,7 +986,7 @@
         "sendError": false,
         "encoding": "none",
         "x": 660,
-        "y": 140,
+        "y": 200,
         "wires": [
             [
                 "http_resp_static"
@@ -989,7 +1002,7 @@
         "statusCode": "",
         "headers": {},
         "x": 1130,
-        "y": 140,
+        "y": 200,
         "wires": []
     },
     {
@@ -1004,23 +1017,12 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 120,
-        "y": 140,
+        "y": 200,
         "wires": [
             [
                 "3bad2aa489f5f9b1"
             ]
         ]
-    },
-    {
-        "id": "828692428f046657",
-        "type": "http response",
-        "z": "5ccba3331b3862fe",
-        "name": "",
-        "statusCode": "",
-        "headers": {},
-        "x": 700,
-        "y": 460,
-        "wires": []
     },
     {
         "id": "40e7e3ae61fbbd33",
@@ -1033,30 +1035,10 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 100,
-        "y": 460,
+        "y": 420,
         "wires": [
             [
-                "f964fcf35e39e4f5"
-            ]
-        ]
-    },
-    {
-        "id": "f964fcf35e39e4f5",
-        "type": "subflow:8ebee3b55772fac1",
-        "z": "5ccba3331b3862fe",
-        "name": "home",
-        "env": [
-            {
-                "name": "name",
-                "value": "home",
-                "type": "str"
-            }
-        ],
-        "x": 530,
-        "y": 460,
-        "wires": [
-            [
-                "828692428f046657"
+                "81c6b1c2920f88c3"
             ]
         ]
     },
@@ -1068,7 +1050,7 @@
         "statusCode": "",
         "headers": {},
         "x": 870,
-        "y": 540,
+        "y": 480,
         "wires": []
     },
     {
@@ -1082,10 +1064,10 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 100,
-        "y": 540,
+        "y": 480,
         "wires": [
             [
-                "77331f482db1a351"
+                "705193645b7ea8ef"
             ]
         ]
     },
@@ -1101,8 +1083,8 @@
                 "type": "str"
             }
         ],
-        "x": 700,
-        "y": 540,
+        "x": 710,
+        "y": 480,
         "wires": [
             [
                 "28e1a882888fd06c"
@@ -1116,8 +1098,8 @@
         "name": "",
         "statusCode": "",
         "headers": {},
-        "x": 700,
-        "y": 600,
+        "x": 870,
+        "y": 540,
         "wires": []
     },
     {
@@ -1131,7 +1113,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 110,
-        "y": 600,
+        "y": 540,
         "wires": [
             [
                 "4183710265a7b392"
@@ -1150,31 +1132,11 @@
                 "type": "str"
             }
         ],
-        "x": 520,
-        "y": 600,
-        "wires": [
-            [
-                "059ffa9c9156b14e"
-            ]
-        ]
-    },
-    {
-        "id": "77331f482db1a351",
-        "type": "function",
-        "z": "5ccba3331b3862fe",
-        "name": "todos",
-        "func": "msg.todos = global.get(\"todos\") || [];\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 390,
+        "x": 700,
         "y": 540,
         "wires": [
             [
-                "705193645b7ea8ef"
+                "059ffa9c9156b14e"
             ]
         ]
     },
@@ -1191,7 +1153,7 @@
         "onceDelay": 0.1,
         "topic": "",
         "x": 140,
-        "y": 720,
+        "y": 640,
         "wires": [
             [
                 "1d123ad727f859ba"
@@ -1212,7 +1174,7 @@
         "finalize": "",
         "libs": [],
         "x": 360,
-        "y": 720,
+        "y": 640,
         "wires": [
             []
         ]
@@ -1228,7 +1190,7 @@
         "upload": false,
         "swaggerDoc": "",
         "x": 130,
-        "y": 840,
+        "y": 760,
         "wires": [
             [
                 "1451e9a3ff81c31b"
@@ -1241,7 +1203,7 @@
         "z": "5ccba3331b3862fe",
         "g": "eea2ca176b38c47f",
         "name": "createTodo",
-        "func": "const todos = global.get(\"todos\") || [];\n\nconst id = todos.reduce((max, t) => Math.max(max, t.id), 0) + 1;\ntodos.push({ id, title: msg.payload.title, done: false });\nglobal.set(\"todos\", todos);\nmsg.notification = { message: \"Task created\", type: \"success\" };\n\nmsg.todos = todos;\nreturn msg;",
+        "func": "const todos = global.get(\"todos\") || [];\n\nconst id = todos.reduce((max, t) => Math.max(max, t.id), 0) + 1;\ntodos.push({ id, title: msg.payload.title, done: false });\nglobal.set(\"todos\", todos);\nmsg.notification = { message: \"Task created\", type: \"success\" };\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -1249,10 +1211,10 @@
         "finalize": "",
         "libs": [],
         "x": 690,
-        "y": 840,
+        "y": 760,
         "wires": [
             [
-                "50762f6746beb41c"
+                "eb75e58533fcec85"
             ]
         ]
     },
@@ -1267,7 +1229,7 @@
         "upload": false,
         "swaggerDoc": "",
         "x": 150,
-        "y": 780,
+        "y": 700,
         "wires": [
             [
                 "0ea9e7a011c922cc"
@@ -1288,7 +1250,7 @@
         "finalize": "",
         "libs": [],
         "x": 380,
-        "y": 780,
+        "y": 700,
         "wires": [
             [
                 "0c4daf540e0ce1a7"
@@ -1314,7 +1276,7 @@
             }
         ],
         "x": 600,
-        "y": 780,
+        "y": 700,
         "wires": [
             [
                 "f42a64218de838ae"
@@ -1330,7 +1292,7 @@
         "statusCode": "",
         "headers": {},
         "x": 780,
-        "y": 780,
+        "y": 700,
         "wires": []
     },
     {
@@ -1344,7 +1306,7 @@
         "upload": false,
         "swaggerDoc": "",
         "x": 130,
-        "y": 900,
+        "y": 820,
         "wires": [
             [
                 "eea3db9e5253529e"
@@ -1357,7 +1319,7 @@
         "z": "5ccba3331b3862fe",
         "g": "eea2ca176b38c47f",
         "name": "updateTodo",
-        "func": "const todos = global.get(\"todos\") || [];\nconst todo = todos.find(t => t.id === Number(msg.req.params.id));\n\nif (!todo) {\n    msg.notification = { message: \"Task not found\", type: \"error\" };\n} else {\n    todo.title = msg.payload.title;\n    global.set(\"todos\", todos);\n    msg.notification = { message: \"Task updated\", type: \"success\" };\n}\n\nmsg.todos = todos;\nreturn msg;",
+        "func": "const todos = global.get(\"todos\") || [];\nconst todo = todos.find(t => t.id === Number(msg.req.params.id));\n\nif (!todo) {\n    msg.notification = { message: \"Task not found\", type: \"error\" };\n} else {\n    todo.title = msg.payload.title;\n    global.set(\"todos\", todos);\n    msg.notification = { message: \"Task updated\", type: \"success\" };\n}\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -1365,10 +1327,10 @@
         "finalize": "",
         "libs": [],
         "x": 630,
-        "y": 940,
+        "y": 860,
         "wires": [
             [
-                "50762f6746beb41c"
+                "eb75e58533fcec85"
             ]
         ]
     },
@@ -1390,7 +1352,7 @@
                 "type": "str"
             }
         ],
-        "x": 1070,
+        "x": 1040,
         "y": 940,
         "wires": [
             [
@@ -1406,7 +1368,7 @@
         "name": "",
         "statusCode": "",
         "headers": {},
-        "x": 1250,
+        "x": 1220,
         "y": 940,
         "wires": []
     },
@@ -1421,7 +1383,7 @@
         "upload": false,
         "swaggerDoc": "",
         "x": 160,
-        "y": 1000,
+        "y": 920,
         "wires": [
             [
                 "08d16c6c900bd942"
@@ -1434,7 +1396,7 @@
         "z": "5ccba3331b3862fe",
         "g": "eea2ca176b38c47f",
         "name": "toggleTodo",
-        "func": "const todos = global.get(\"todos\") || [];\nconst todo = todos.find(t => t.id === Number(msg.req.params.id));\n\nif (!todo) {\n    msg.notification = { message: \"Task not found\", type: \"error\" };\n} else {\n    todo.done = !todo.done;\n    global.set(\"todos\", todos);\n    msg.notification = { message: todo.done ? \"Task completed\" : \"Task reopened\", type: \"info\" };\n}\n\nmsg.todos = todos;\nreturn msg;",
+        "func": "const todos = global.get(\"todos\") || [];\nconst todo = todos.find(t => t.id === Number(msg.req.params.id));\n\nif (!todo) {\n    msg.notification = { message: \"Task not found\", type: \"error\" };\n} else {\n    todo.done = !todo.done;\n    global.set(\"todos\", todos);\n    msg.notification = { message: todo.done ? \"Task completed\" : \"Task reopened\", type: \"info\" };\n}\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -1442,10 +1404,10 @@
         "finalize": "",
         "libs": [],
         "x": 370,
-        "y": 1000,
+        "y": 920,
         "wires": [
             [
-                "50762f6746beb41c"
+                "eb75e58533fcec85"
             ]
         ]
     },
@@ -1460,7 +1422,7 @@
         "upload": false,
         "swaggerDoc": "",
         "x": 140,
-        "y": 1060,
+        "y": 980,
         "wires": [
             [
                 "0d87c9007d8ac487"
@@ -1473,7 +1435,7 @@
         "z": "5ccba3331b3862fe",
         "g": "eea2ca176b38c47f",
         "name": "deleteTodo",
-        "func": "const id = Number(msg.req.params.id);\nconst todos = global.get(\"todos\") || [];\nconst rest = todos.filter(t => t.id !== id);\n\nif (rest.length === todos.length) {\n    msg.notification = { message: \"Task not found\", type: \"error\" };\n} else {\n    global.set(\"todos\", rest);\n    msg.notification = { message: \"Task deleted\", type: \"success\" };\n}\n\nmsg.todos = rest;\nreturn msg;",
+        "func": "const id = Number(msg.req.params.id);\nconst todos = global.get(\"todos\") || [];\nconst rest = todos.filter(t => t.id !== id);\n\nif (rest.length === todos.length) {\n    msg.notification = { message: \"Task not found\", type: \"error\" };\n} else {\n    global.set(\"todos\", rest);\n    msg.notification = { message: \"Task deleted\", type: \"success\" };\n}\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -1481,10 +1443,10 @@
         "finalize": "",
         "libs": [],
         "x": 330,
-        "y": 1060,
+        "y": 980,
         "wires": [
             [
-                "50762f6746beb41c"
+                "eb75e58533fcec85"
             ]
         ]
     },
@@ -1492,14 +1454,14 @@
         "id": "705193645b7ea8ef",
         "type": "link call",
         "z": "5ccba3331b3862fe",
-        "name": "filterTodos",
+        "name": "loadTodos",
         "links": [
             "7a0c67ffa80f8cd2"
         ],
         "linkType": "static",
         "timeout": "30",
         "x": 530,
-        "y": 540,
+        "y": 480,
         "wires": [
             [
                 "bcd885dd42ef14bf"
@@ -1511,13 +1473,13 @@
         "type": "link call",
         "z": "5ccba3331b3862fe",
         "g": "eea2ca176b38c47f",
-        "name": "filterTodos",
+        "name": "loadTodos",
         "links": [
             "7a0c67ffa80f8cd2"
         ],
         "linkType": "static",
         "timeout": "30",
-        "x": 900,
+        "x": 870,
         "y": 940,
         "wires": [
             [
@@ -1530,10 +1492,10 @@
         "type": "link in",
         "z": "5ccba3331b3862fe",
         "g": "eea2ca176b38c47f",
-        "name": "filterTodos",
+        "name": "loadTodos",
         "links": [],
         "x": 155,
-        "y": 1220,
+        "y": 1140,
         "wires": [
             [
                 "b4b7c6183fe0fc6e"
@@ -1545,8 +1507,8 @@
         "type": "function",
         "z": "5ccba3331b3862fe",
         "g": "eea2ca176b38c47f",
-        "name": "filterTodos",
-        "func": "// ?filter=all|active|done\n// a page request (GET) takes it from its own URL,\n// an action (POST/PUT/PATCH/DELETE) - from the page it was sent from (HX-Current-URL header)\nconst fromUrl = url => (/[?&]filter=([^&#]*)/.exec(url || \"\") || [])[1];\nconst param = msg.req.method === \"GET\" ? msg.req.query.filter : fromUrl(msg.req.headers[\"hx-current-url\"]);\nconst filter = [\"active\", \"done\"].includes(param) ? param : \"all\";\n\nconst todos = msg.todos || [];\nmsg.activeCount = todos.filter(t => !t.done).length;   // counter in the page title, before filtering\nmsg.todos = filter === \"active\" ? todos.filter(t => !t.done)\n          : filter === \"done\"   ? todos.filter(t => t.done)\n          : todos;\nmsg.filter = { [filter]: true };   // {{#filter.active}} in the template\nreturn msg;",
+        "name": "loadTodos",
+        "func": "// tasks for the list: reads global.todos, counts the active ones, applies ?filter=all|active|done\n// a page request (GET) takes it from its own URL,\n// an action (POST/PUT/PATCH/DELETE) - from the page it was sent from (HX-Current-URL header)\nconst fromUrl = url => (/[?&]filter=([^&#]*)/.exec(url || \"\") || [])[1];\nconst param = msg.req.method === \"GET\" ? msg.req.query.filter : fromUrl(msg.req.headers[\"hx-current-url\"]);\nconst filter = [\"active\", \"done\"].includes(param) ? param : \"all\";\n\nconst todos = global.get(\"todos\") || [];\nmsg.activeCount = todos.filter(t => !t.done).length;   // counter in the page title, before filtering\nmsg.todos = filter === \"active\" ? todos.filter(t => !t.done)\n          : filter === \"done\"   ? todos.filter(t => t.done)\n          : todos;\nmsg.filter = { [filter]: true };   // {{#filter.active}} in the template\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -1554,7 +1516,7 @@
         "finalize": "",
         "libs": [],
         "x": 360,
-        "y": 1220,
+        "y": 1140,
         "wires": [
             [
                 "bc04261a42408b58"
@@ -1570,56 +1532,7 @@
         "mode": "return",
         "links": [],
         "x": 535,
-        "y": 1220,
-        "wires": []
-    },
-    {
-        "id": "77f53a25bd2d315c",
-        "type": "catch",
-        "z": "5ccba3331b3862fe",
-        "g": "cf522e74c2f1fece",
-        "name": "errors on this tab",
-        "scope": null,
-        "uncaught": false,
-        "x": 170,
-        "y": 302,
-        "wires": [
-            [
-                "2ec2bf1787328180"
-            ]
-        ]
-    },
-    {
-        "id": "2ec2bf1787328180",
-        "type": "function",
-        "z": "5ccba3331b3862fe",
-        "g": "cf522e74c2f1fece",
-        "name": "errorResponse",
-        "func": "// errors in endpoint logic (outside View) - answer 500 instead of letting the request hang;\n// errors handled by catch are not logged, so log it here (node.warn: node.error would loop)\nnode.warn(msg.error.message);\n\n// not an HTTP request (e.g. seedTodos) or already answered (e.g. link call timeout after a 500)\nif (!msg.res || msg.res._res.headersSent) return null;\n\nconst notFound = /ENOENT/.test(msg.error.message);   // e.g. a missing file in /assets\nmsg.statusCode = notFound ? 404 : 500;\nmsg.payload = notFound ? \"Not found\" : \"Server error\";\nmsg.headers = {};   // drop headers set before the error (e.g. Content-Type of an asset)\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 390,
-        "y": 302,
-        "wires": [
-            [
-                "073ad41ba89962a9"
-            ]
-        ]
-    },
-    {
-        "id": "073ad41ba89962a9",
-        "type": "http response",
-        "z": "5ccba3331b3862fe",
-        "g": "cf522e74c2f1fece",
-        "name": "",
-        "statusCode": "",
-        "headers": {},
-        "x": 590,
-        "y": 302,
+        "y": 1140,
         "wires": []
     },
     {
@@ -1636,13 +1549,13 @@
             }
         ],
         "x": 380,
-        "y": 840,
+        "y": 760,
         "wires": [
             [
                 "6b9fa8821cd0352b"
             ],
             [
-                "8f50d4f64551b002"
+                "0c4daf540e0ce1a7"
             ]
         ]
     },
@@ -1660,52 +1573,141 @@
             }
         ],
         "x": 380,
-        "y": 900,
+        "y": 820,
         "wires": [
             [
                 "491c0c6138cc1eb3"
             ],
             [
-                "8f50d4f64551b002"
+                "0c4daf540e0ce1a7"
             ]
         ]
     },
     {
-        "id": "8f50d4f64551b002",
-        "type": "subflow:8ebee3b55772fac1",
+        "id": "946ebc0fc1884263",
+        "type": "inject",
         "z": "5ccba3331b3862fe",
-        "g": "eea2ca176b38c47f",
-        "name": "TodoForm (errors)",
-        "env": [
-            {
-                "name": "type",
-                "value": "component",
-                "type": "str"
-            },
-            {
-                "name": "name",
-                "value": "TodoForm",
-                "type": "str"
-            }
-        ],
-        "x": 610,
-        "y": 880,
+        "g": "cf522e74c2f1fece",
+        "name": "on start",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "0.5",
+        "topic": "",
+        "x": 140,
+        "y": 80,
         "wires": [
             [
-                "f73a61bbc3263fa7"
+                "89b7ecbf89beb889"
             ]
         ]
     },
     {
-        "id": "f73a61bbc3263fa7",
+        "id": "89b7ecbf89beb889",
+        "type": "function",
+        "z": "5ccba3331b3862fe",
+        "g": "cf522e74c2f1fece",
+        "name": "layout path",
+        "func": "msg.filename = `${env.get(\"PROJECT_PATH\")}/public/index.html`;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 310,
+        "y": 80,
+        "wires": [
+            [
+                "6a21a2bd24efc6b6"
+            ]
+        ]
+    },
+    {
+        "id": "6a21a2bd24efc6b6",
+        "type": "file in",
+        "z": "5ccba3331b3862fe",
+        "g": "cf522e74c2f1fece",
+        "name": "read layout",
+        "filename": "filename",
+        "filenameType": "msg",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": true,
+        "encoding": "none",
+        "allProps": false,
+        "x": 480,
+        "y": 80,
+        "wires": [
+            [
+                "cd9e3a0a3696b39c"
+            ]
+        ]
+    },
+    {
+        "id": "cd9e3a0a3696b39c",
+        "type": "function",
+        "z": "5ccba3331b3862fe",
+        "g": "cf522e74c2f1fece",
+        "name": "check PROJECT_PATH",
+        "func": "// runs once on start: does PROJECT_PATH point to this project?\nif (msg.error) {\n    node.status({ fill: \"red\", shape: \"ring\", text: \"PROJECT_PATH is wrong\" });\n    node.warn(`PROJECT_PATH \"${env.get(\"PROJECT_PATH\")}\" does not point to this project ` +\n              `(${msg.filename} not found). Set it in Settings -> Environment: ` +\n              `the project folder, absolute or relative to the Node-RED working directory.`);\n} else {\n    node.status({ fill: \"green\", shape: \"dot\", text: \"PROJECT_PATH ok\" });\n}\nreturn null;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 680,
+        "y": 80,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "210df38f48819067",
+        "type": "catch",
+        "z": "5ccba3331b3862fe",
+        "name": "errors on this tab",
+        "scope": null,
+        "uncaught": false,
+        "x": 520,
+        "y": 1440,
+        "wires": [
+            [
+                "ed701fa9dcdcab9d"
+            ]
+        ]
+    },
+    {
+        "id": "ed701fa9dcdcab9d",
+        "type": "function",
+        "z": "5ccba3331b3862fe",
+        "name": "errorResponse",
+        "func": "// errors in endpoint logic (outside View) - answer 500 instead of letting the request hang;\n// errors handled by catch are not logged, so log it here (node.warn: node.error would loop)\nnode.warn(msg.error.message);\n\n// not an HTTP request (e.g. seedTodos) or already answered (e.g. link call timeout after a 500)\nif (!msg.res || msg.res._res.headersSent) return null;\n\nconst notFound = /ENOENT/.test(msg.error.message);   // e.g. a missing file in /assets\nmsg.statusCode = notFound ? 404 : 500;\nmsg.payload = notFound ? \"Not found\" : \"Server error\";\nmsg.headers = {};   // drop headers set before the error (e.g. Content-Type of an asset)\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 740,
+        "y": 1440,
+        "wires": [
+            [
+                "0b2861932ddf767b"
+            ]
+        ]
+    },
+    {
+        "id": "0b2861932ddf767b",
         "type": "http response",
         "z": "5ccba3331b3862fe",
-        "g": "eea2ca176b38c47f",
         "name": "",
         "statusCode": "",
         "headers": {},
-        "x": 930,
-        "y": 880,
+        "x": 940,
+        "y": 1440,
         "wires": []
     }
 ]

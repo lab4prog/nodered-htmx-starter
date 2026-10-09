@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NodeRed + HTMX</title>
+    <title>Node-RED + HTMX</title>
     <!-- history restore must request the full page, not an HTMX fragment -->
     <meta name="htmx-config" content='{"historyRestoreAsHxRequest": false}'>
     <link rel="stylesheet" href="/assets/style.css">
@@ -13,17 +13,9 @@
 <body hx-indicator="#indicator">
 
     <nav>
-        <li>
-            <a href="/" hx-get="/" hx-target="#main" hx-push-url="true">
-                Home
-            </a>
-            <a href="/pages/todo" hx-get="/pages/todo" hx-target="#main" hx-push-url="true">
-                ToDo
-            </a>
-            <a href="/pages/contacts" hx-get="/pages/contacts" hx-target="#main" hx-push-url="true">
-                Contacts
-            </a>
-        </li>
+        <a href="/" hx-get="/" hx-target="#main" hx-push-url="true">Home</a>
+        <a href="/pages/todo" hx-get="/pages/todo" hx-target="#main" hx-push-url="true">ToDo</a>
+        <a href="/pages/contacts" hx-get="/pages/contacts" hx-target="#main" hx-push-url="true">Contacts</a>
     </nav>
 
     <main id="main">
@@ -36,48 +28,30 @@
     </div>
     <!-- END LOADER -->
 
-    <!-- NOTIFICATION -->
-    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 5000;" id="toastPlacement"></div>
+    <!-- NOTIFICATION (main.js: showToast) -->
+    <div id="toastPlacement" class="toast-container"></div>
 
     <template id="toast-template-success">
-        <div class="toast align-items-center text-white bg-success border-0 mb-2" role="alert" aria-live="assertive"
-            aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body d-flex align-items-center">
-                    <i class="ti ti-check me-2 fs-3"></i>
-                    <div class="toast-text"></div>
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                    aria-label="Close"></button>
-            </div>
+        <div class="toast toast-success" role="alert" aria-live="assertive" aria-atomic="true">
+            <span class="toast-icon" aria-hidden="true">&#10003;</span>
+            <div class="toast-text"></div>
+            <button type="button" class="toast-close" aria-label="Close"></button>
         </div>
     </template>
 
     <template id="toast-template-error">
-        <div class="toast align-items-center text-white bg-danger border-0 mb-2" role="alert" aria-live="assertive"
-            aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body d-flex align-items-center">
-                    <i class="ti ti-alert-triangle me-2 fs-3"></i>
-                    <div class="toast-text"></div>
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                    aria-label="Close"></button>
-            </div>
+        <div class="toast toast-error" role="alert" aria-live="assertive" aria-atomic="true">
+            <span class="toast-icon" aria-hidden="true">&#9888;</span>
+            <div class="toast-text"></div>
+            <button type="button" class="toast-close" aria-label="Close"></button>
         </div>
     </template>
 
     <template id="toast-template-info">
-        <div class="toast align-items-center text-white bg-primary border-0 mb-2" role="alert" aria-live="assertive"
-            aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body d-flex align-items-center">
-                    <i class="ti ti-info-circle me-2 fs-3"></i>
-                    <div class="toast-text"></div>
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                    aria-label="Close"></button>
-            </div>
+        <div class="toast toast-info" role="alert" aria-live="assertive" aria-atomic="true">
+            <span class="toast-icon" aria-hidden="true">&#8505;</span>
+            <div class="toast-text"></div>
+            <button type="button" class="toast-close" aria-label="Close"></button>
         </div>
     </template>
     <!-- END NOTIFICATION-->

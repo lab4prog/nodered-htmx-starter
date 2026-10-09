@@ -1,6 +1,6 @@
 {
-    "name": "nodered-htmx-supabase-starter",
-    "description": "nodered-htmx-starter",
+    "name": "nodered-htmx-starter",
+    "description": "Node-RED + HTMX starter: HTML pages and components rendered by a View subflow",
     "version": "0.0.1",
     "dependencies": {},
     "node-red": {

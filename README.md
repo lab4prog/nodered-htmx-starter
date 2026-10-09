@@ -36,7 +36,9 @@ A starter project for building web applications with [Node-RED](https://nodered.
    ```
    PROJECT_PATH = ./data/projects/nodered-htmx-starter
    ```
-   It is resolved from the working directory of the Node-RED process. If your project lives elsewhere, change it and the path in the **watch** node of the *Bootstraping* group.
+   It is the project folder - absolute, or relative to the working directory of the Node-RED process. This is the **only** place to change it: the file watcher uses it too.
+
+   On start the node **check PROJECT_PATH** (group *Bootstraping*) shows a green *PROJECT_PATH ok* status, or a red one with a hint in the Node-RED log if the path is wrong.
 5. Open `http://your-nodered-address/`.
 
 
@@ -88,11 +90,12 @@ nodered-htmx-starter/
 
 | Group / endpoint | Purpose |
 |---|---|
-| *Bootstraping*: `GET /` | Home page (`View`: Page `home`) |
-| *Bootstraping*: `GET /assets/:filename` | Static files from `public/assets`. Only plain file names are served (`style.css`), anything else (`..%2F`, `.hidden`) → 404 |
-| *Bootstraping*: `watch` + `inject` → `clearCache` | Clears the template cache on any change in `public` (recursive) or by the inject button |
+| *Bootstraping*: `GET /` | Home page (`View`: Page `home`); `GET /pages/home` is wired into the same `View` |
+| *Bootstraping*: `GET /assets/:filename` | Static files from `public/assets` (css, js, json, images, icons, fonts). Only plain file names are served (`style.css`), anything else (`..%2F`, `.hidden`) → 404. `Cache-Control: no-cache` + ETag: the browser keeps the file and gets `304 Not Modified` while it is unchanged |
+| *Bootstraping*: `watch` + `inject` → `clearCache` | Clears the template cache on any change in the project folder (`${PROJECT_PATH}`, recursive) or by the inject button |
+| *Bootstraping*: `on start` → `check PROJECT_PATH` | Checks that `PROJECT_PATH` points to this project (node status + log hint) |
 | *Bootstraping*: `catch` → `errorResponse` | Errors in endpoint logic on this tab → `500 Server error` (see [Errors](#errors)) |
-| `GET /pages/home`, `/pages/todo`, `/pages/contacts` | Pages |
+| `GET /pages/todo`, `/pages/contacts` | Pages |
 | *ToDo* | CRUD example: create, edit, toggle, delete, filter - see [ToDo example](#-todo-example) |
 
 
@@ -127,7 +130,7 @@ Errors handled by `catch` are not logged by Node-RED, so both handlers write the
 
 > The `HTTP Response` nodes must not have a fixed status code, otherwise it overrides `msg.statusCode`.
 
-**Cache.** Loaded files are kept in the global context variable `cache` (key - full path). The `watch` node clears it when anything in `public` changes, the `inject` button clears it manually.
+**Cache.** Loaded files are kept in the global context variable `cache` (key - full path). The `watch` node clears it when anything in the project folder changes, the `inject` button clears it manually.
 
 
 ## 🧩 Templates
@@ -310,7 +313,7 @@ A small CRUD in the *ToDo* group. Tasks live in the global context variable `tod
 
 | Endpoint | Function | Response | Toast |
 |---|---|---|---|
-| `GET /pages/todo?filter=` | `todos` | page `todo` | - |
+| `GET /pages/todo?filter=` | `loadTodos` | page `todo` | - |
 | `GET /todos/:id/edit` | `editTodo` | component `TodoForm` (into the modal) | Task not found |
 | `POST /todos` | `Validate` → `createTodo` | component `TodoUpdate` (422: `TodoForm` with errors) | Task created |
 | `PUT /todos/:id` | `Validate` → `updateTodo` | component `TodoUpdate` (422: `TodoForm` with errors) | Task updated |
@@ -322,7 +325,7 @@ The four actions only change the data and set the toast. They are all wired into
 ```
 createTodo ─┐
 updateTodo ─┤
-toggleTodo ─┼─► link call filterTodos ─► View (Component, TodoUpdate) ─► HTTP Response
+toggleTodo ─┼─► link call loadTodos ─► View (Component, TodoUpdate) ─► HTTP Response
 deleteTodo ─┘
 ```
 
@@ -336,7 +339,7 @@ Components of the page:
 | `TodoForm` | one form for create and edit: without `msg.form.id` it sends `POST /todos`, with it - `PUT /todos/:id`; shows `msg.errors` |
 | `TodoUpdate` | response of the actions: `Todo` + the counter with `hx-swap-oob` - [tool 3](#3-hx-swap-oob-the-server-updates-one-more-block) |
 
-`filterTodos` is a subroutine (`link in` → function → `link out` in return mode) called with **link call** from the shared tail and from the page endpoint. It counts active tasks (`msg.activeCount`) and filters the list. A page request takes the filter from its own URL (`?filter=done`), an action takes it from the page it was sent from (the `HX-Current-URL` header HTMX sends with every request). So completing a task on the *Active* tab removes it from the list.
+`loadTodos` is a subroutine (`link in` → function → `link out` in return mode) called with **link call** from the shared tail and from the page endpoint. It is the only place that prepares the list: it reads `global.todos`, counts active tasks (`msg.activeCount`) and applies the filter (`msg.todos`). The actions only change the data. A page request takes the filter from its own URL (`?filter=done`), an action takes it from the page it was sent from (the `HX-Current-URL` header HTMX sends with every request). So completing a task on the *Active* tab removes it from the list.
 
 ```javascript
 // createTodo - the title is already validated and trimmed by Validate
@@ -347,7 +350,6 @@ todos.push({ id, title: msg.payload.title, done: false });
 global.set("todos", todos);
 msg.notification = { message: "Task created", type: "success" };
 
-msg.todos = todos;
 return msg;
 ```
 
@@ -387,12 +389,12 @@ The form shows the errors and keeps the entered values:
 
 On the client a `422` response **replaces the form that sent the request** instead of the usual `hx-target` (`main.js`, `htmx:beforeSwap`). HTMX does not swap 4xx responses by default, so this one handler makes it work for any form: the modal stays open, the list is not touched. The modal closes only on a `2xx` response.
 
-In the ToDo example `POST /todos` and `PUT /todos/:id` go through `Validate`, and both invalid outputs share one `View (TodoForm)` → `HTTP Response`.
+In the ToDo example `POST /todos` and `PUT /todos/:id` go through `Validate`. Their invalid outputs go to the same `View (TodoForm)` → `HTTP Response` as the edit form (`GET /todos/:id/edit`) - one form, status 200 or 422.
 
 
 ## 🔔 UI Helpers (`main.js` + `style.css`)
 
-`index.html` keeps Bootstrap-like class names for the toast templates, but no CSS framework is loaded - everything is styled in `style.css`.
+No CSS framework is loaded - the toasts, modal, loader, card and ToDo are styled in `style.css`.
 
 ### Toasts
 

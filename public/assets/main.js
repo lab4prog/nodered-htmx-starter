@@ -51,12 +51,13 @@ function showToastNotification(message, type) {
 
 // Close button inside a toast
 document.addEventListener('click', function (e) {
-    const closeBtn = e.target.closest('.toast .btn-close');
+    const closeBtn = e.target.closest('.toast-close');
     if (closeBtn) closeBtn.closest('.toast').remove();
 });
 
 /* MODAL */
 const modal = document.getElementById('Modal');
+const modalContent = document.getElementById('ModalContent');
 
 function openModal() {
     modal.classList.add('show');
@@ -80,9 +81,20 @@ document.addEventListener('htmx:afterRequest', function (e) {
     if (status >= 200 && status < 300 && modal.contains(e.detail.elt)) closeModal();
 });
 
+// Open: a button with data-modal-component="id" copies <template id="id"> into the modal.
 // Close: [data-modal-close] button, click on the backdrop, Escape
 document.addEventListener('click', function (e) {
-    if (e.target.closest('[data-modal-close]') || e.target === modal) closeModal();
+    const opener = e.target.closest('[data-modal-component]');
+    if (opener) {
+        const id = opener.getAttribute('data-modal-component');
+        const template = document.getElementById(id);
+        if (!template) return console.warn(`Modal: template "#${id}" not found.`);
+        modalContent.innerHTML = template.innerHTML;
+        htmx.process(modalContent);
+        openModal();
+    } else if (e.target.closest('[data-modal-close]') || e.target === modal) {
+        closeModal();
+    }
 });
 document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') closeModal();
@@ -99,23 +111,4 @@ document.addEventListener('htmx:beforeSwap', function (e) {
     const sender = e.detail.requestConfig.elt;
     e.detail.target = sender.closest('form') || sender;
     e.detail.swapOverride = 'outerHTML';
-});
-
-/* MODAL COMPONENTS */
-document.addEventListener('click', function (e) {
-    const btn = e.target.closest('[data-modal-component]');
-
-    if (btn) {
-        const componentId = btn.getAttribute('data-modal-component');
-        const template = document.getElementById(componentId);
-        const modalContent = document.getElementById('ModalContent');
-
-        if (template && modalContent) {
-            modalContent.innerHTML = template.innerHTML;
-            htmx.process(modalContent);
-            openModal();
-        } else {
-            console.warn(`ClearFlow Error: Component "${componentId}" or "#ModalContent" not found.`);
-        }
-    }
 });
